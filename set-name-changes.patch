@@ -1,0 +1,2047 @@
+diff --git a/CHANGELOG.md b/CHANGELOG.md
+index 4ff7208..07847f6 100644
+--- a/CHANGELOG.md
++++ b/CHANGELOG.md
+@@ -3,6 +3,38 @@
+ 
+ ## Unreleased
+ 
++- **Every ROM has its own save, named after the ROM file** (`Heartfelt Gold.nds` saves to
++  `Heartfelt Gold.sav`), so a game and its hacks no longer write over each other's progress:
++  hacks keep the game code of the game they are made from, and every HeartGold-based ROM used to
++  share `heartgold.sav`. The save state goes with the save (`Heartfelt Gold.sav.state`). Saves from
++  before carry on: the first time one of a game's ROMs starts, the old shared save is copied for
++  each ROM of that game, and the old file kept as a backup (`heartgold.sav.bak`); a ROM named like
++  it (`HeartGold.nds`, or a `rom.nds`) goes on using it. The other languages' saves
++  (`heartgold-fr.sav`, `black2-es.sav` ...) are handed on the same way. On the Switch, the older
++  one-game downloads' folders keep the game's save name.
++- **Every ROM has its own cheats too, named after the ROM file** (`Heartfelt Gold.nds` reads
++  `cheats/Heartfelt Gold.txt` and `Heartfelt Gold.mch`; which are on, the POPULAR CHEATS among
++  them, is kept in `Heartfelt Gold-on.txt`), the way saves are: cheats were kept by the game's
++  code (`IPKE.txt`), so every HeartGold-based ROM could turn on the same codes, made for only one
++  of them. The cheat database, `usrcheat.dat`, is used for a ROM only when it has an entry made
++  for that ROM (by its header), where it used to give a hack the first entry of the game's code.
++  Files named after the game's code are not read any more: rename one after the ROM (a `rom.nds`
++  goes on using it); DATABASE INFO in CHEATS and `game.log` say when one is left, and which file
++  a ROM's own codes go in.
++- **RENAME in the game list:** give any game the name you want (Heartfelt Gold, Iridium) instead
++  of the game it is made from. **F2** or a right click on a PC or Mac, **X** on a controller or the
++  Switch (with the Switch's own keyboard), or a finger held on the game on a phone; the box also
++  shows the ROM's file and the save it uses. The names are kept in `names.txt` beside the `saves`
++  folder (in `/switch/pokemon-ds-wide/` on the Switch, in the ROMs folder on Android), a line per
++  game, which can be edited by hand too. They are the window's title, and desktop shortcuts
++  (Windows, Linux and the Mac) and HOME Menu icons take them: each renamed hack gets its own,
++  which starts that ROM (`--game "Heartfelt Gold.nds"`).
++- **A picture for each ROM:** one named like it, in `icons/` (`icons/Heartfelt Gold.jpg`) or beside
++  it, comes before the game code's (`icons/IPKE.jpg`, still for every ROM of the game without its
++  own), so each hack of a game can have its own art.
++- **The menus' letters have , & ? and _ of their own**, for the names (the typing cursor shows in
++  the same letters, in LOG IN too). A name too long for its tile is cut short with `..`, and the
++  list's line of keys narrows its gaps before its letters get smaller on a small window.
+ - **GBA games: the pause menu works like the DS games'.** On the Switch, + is the GBA's START and
+   + and - together open the pause menu (START BUTTON in CONTROLS swaps them); a lone + or - reaches
+   the game a moment later, so the pair is never taken for one of them. The menu has the DS games'
+diff --git a/README.md b/README.md
+index f580cea..81f2f68 100644
+--- a/README.md
++++ b/README.md
+@@ -58,7 +58,8 @@ DS game, presented the way it should look on a modern screen.
+ 
+ - **Beta** languages work with the exact ROM copies they were checked against, and complete
+   playthroughs haven't been verified yet. Other GBA games play too, without widescreen.
+-- Each language keeps its own save (`heartgold-fr.sav`, `black2-es.sav`, `pearl-fr.sav` ...).
++- Each ROM keeps its own save, named after the ROM file, so each language and each hack of a
++  game has its own ([Use your own save](#use-your-own-save)).
+ - The menus speak English, Spanish, Italian, French, German, Japanese and Korean
+   (DISPLAY > LANGUAGE; AUTO follows your system), whatever the game's own language. More in
+   [regional games and touch controls](docs/REGIONAL-AND-TOUCH-CONTROLS.md).
+@@ -97,11 +98,12 @@ The `README.txt` inside has the full list. **CONTROLS > KEYS AND BUTTONS** in th
+ the game list's settings page) changes any of them, including fast forward, swapping the screens,
+ save state and load state, on the keyboard and on a controller (the game list follows the ones you change).
+ 
+-**Saves** go in the `saves` folder, one per game (`black2.sav`, `soulsilver.sav`,
+-`platinum.sav`, ...). To carry on from another emulator, put its `.sav` there
+-under that name. **Pictures**: the list shows each game's box art; for your own,
+-put a JPEG or PNG in an `icons` folder beside the program, named after the game's
+-code (`IREO.jpg` for Black 2, see the `README.txt`).
++**Saves** go in the `saves` folder, one per ROM, named after it (`Black 2.nds`:
++`Black 2.sav`). To carry on from another emulator, put its `.sav` there under that
++name. **Pictures**: the list shows each game's box art; for your own, put a JPEG or
++PNG in an `icons` folder beside the program, named like the ROM (`Black 2.jpg`) or
++after the game's code (`IREO.jpg` for Black 2, see the `README.txt`). **F2** (or a
++right click) renames the chosen game ([hacks](#hacks-your-own-names-and-pictures)).
+ 
+ ![The settings page: its groups (DISPLAY, SOUND, GRAPHICS, CONTROLS, SHORTCUTS, GAME LIST, HELP), each with the options in it](docs/screenshots/settings-page.png)
+ 
+@@ -182,13 +184,14 @@ Tell us how yours runs, with its `game.log`.
+ 3. Hold R while starting any game, pick **Pokémon Fulldex**, then the
+    game (started from the album there is not enough memory).
+ 
+-In the list the D-pad or a stick moves between games, **A** plays, **Y** opens
+-the settings (the pause menu's options, each explained) and **+** goes back to
+-the Homebrew Menu. It opens on the game you played last. While playing, **+**
+-opens the pause menu (START BUTTON in the settings can make + the DS's START
+-again, with + and − together for the menu); **QUIT** there saves and comes back to
+-the list (also when started from its HOME Menu icon). With only one game found
+-there is no list: it starts straight away. **Touch screen:** tap it in handheld
++In the list the D-pad or a stick moves between games, **A** plays, **X** renames
++the chosen game, **Y** opens the settings (the pause menu's options, each
++explained) and **+** goes back to the Homebrew Menu. It opens on the game you
++played last. While playing, **+** opens the pause menu (START BUTTON in the
++settings can make + the DS's START again, with + and − together for the menu);
++**QUIT** there saves and comes back to the list (also when started from its HOME
++Menu icon). With only one game found there is no list: it starts straight
++away. **Touch screen:** tap it in handheld
+ mode; docked, the right stick moves a cursor and **ZL** touches. Pressing the
+ right stick in shows the other screen.
+ 
+@@ -197,18 +200,21 @@ list also shows the games in them (`/switch/pokemon-black2-wide/` and so on) and
+ plays each with the save already there. Those downloads are no longer updated,
+ so the all-in-one is the one to use.
+ 
+-**Saves:** each game keeps its save under its own name (`black2.sav`,
+-`white2.sav`, `black.sav`, `white.sav`, `soulsilver.sav`, `heartgold.sav`,
+-`platinum.sav`), with the GBA games' (`emerald.sav`...): in the `saves` folder of
+-`/switch/pokemon-ds-wide/` for a ROM in its `roms` folder, or of an older one-game
+-download's folder for a ROM there. Saves an earlier version left beside the ROMs are
+-moved into `saves` the first time the list opens (that older download no longer finds
+-them). To carry on from an emulator or a flash cart, copy your save in under that name.
++**Saves:** each ROM in the `roms` folder keeps its save in the `saves` folder of
++`/switch/pokemon-ds-wide/`, named after it (`Black 2.nds`: `Black 2.sav`), so hacks
++of a game each have their own; the GBA games' are there too (`emerald.sav`...). A ROM
++in an older one-game download's folder keeps that download's save name (`black2.sav`
++and so on) in the `saves` folder there. Saves an earlier version left beside the ROMs
++are moved into `saves` the first time the list opens (that older download no longer
++finds them). To carry on from an emulator or a flash cart, copy your save in under
++that name.
+ 
+ **Pictures:** each game shows its box art. For your own, put a square JPEG
+-or PNG in `/switch/pokemon-ds-wide/icons/` named after the game's code: `IRBO`
+-Black, `IRAO` White, `IREO` Black 2, `IRDO` White 2, `IPKE` HeartGold, `IPGE`
+-SoulSilver, `CPUE` Platinum (e.g. `icons/IREO.jpg`).
++or PNG in `/switch/pokemon-ds-wide/icons/` named like the ROM (`Heartfelt Gold.jpg`)
++or after the game's code: `IRBO` Black, `IRAO` White, `IREO` Black 2, `IRDO`
++White 2, `IPKE` HeartGold, `IPGE` SoulSilver, `CPUE` Platinum (e.g.
++`icons/IREO.jpg`). **X** in the list renames the chosen game with the Switch's
++keyboard ([hacks](#hacks-your-own-names-and-pictures)).
+ 
+ **Recommended: start each game from the HOME Menu.** In the all-in-one's
+ settings (**Y** in the list), **HOME MENU ICONS** puts an icon for each game in
+@@ -271,7 +277,8 @@ Razer Kishi and others) plays as a DS and hides the on-screen buttons; its
+ AND BUTTONS** in the pause menu (and on the game list) changes which button does what,
+ including fast forward, swapping the screens, save state and load state.
+ 
+-**Saves** go in a `saves` folder inside your ROMs folder (made for you). The
++**Saves** go in a `saves` folder inside your ROMs folder (made for you), one per
++ROM, named after it. Hold a finger on a game in the list to rename it. The
+ settings and `game.log` are in `Android/data/io.github.mamesj.pokemonds/files`.
+ 
+ **What it needs:** Android 7.0 or newer on a 64-bit phone. The 3D world is drawn
+@@ -311,7 +318,7 @@ the pause menu), or a controller (Xbox, PlayStation, Backbone and others), which
+ The game list is upright. Starting a game turns an iPhone or an iPad sideways.
+ 
+ **Saves, settings, cheats and `game.log`** are all in that Pokémon Fulldex folder in the
+-Files app.
++Files app. Hold a finger on a game in the list to rename it.
+ 
+ **What to expect:** iOS lets no app make code as it runs, so the faster way the other
+ versions run the DS (melonDS's JIT) is left out, and a recent iPhone (an iPhone 13 or newer)
+@@ -363,8 +370,13 @@ PC, a phone, a Mac or an iPhone you can also do this before playing, in the game
+ 
+ ### Use your own save
+ 
+-Carry on from your own save: from another emulator, a flash cart or your real
+-cartridge. Copy it in under the game's name, in this folder:
++Every ROM has a save of its own, named after the ROM file: `Heartfelt Gold.nds`
++saves to `Heartfelt Gold.sav`, `Pokemon Platinum (USA).nds` to
++`Pokemon Platinum (USA).sav`. So a game and its hacks (HeartGold, Heartfelt Gold
++and Iridium all look like HeartGold to the program), and the same game in two
++languages, never write over each other's progress. Carry on from your own save:
++from another emulator, a flash cart or your real cartridge. Copy it in, named like
++your ROM, in this folder:
+ 
+ | Where you play | Folder |
+ |---|---|
+@@ -375,17 +387,17 @@ cartridge. Copy it in under the game's name, in this folder:
+ | iPhone and iPad | Files app: On My iPhone (or iPad) > Pokémon Fulldex > `saves` |
+ | Nintendo Switch | `/switch/pokemon-ds-wide/saves/` on the SD card |
+ 
+-| Game | Save name |
+-|---|---|
+-| Black 2 / White 2 | `black2.sav` / `white2.sav` |
+-| Black / White | `black.sav` / `white.sav` |
+-| SoulSilver / HeartGold | `soulsilver.sav` / `heartgold.sav` |
+-| Platinum | `platinum.sav` |
+-| Diamond / Pearl | `diamond.sav` / `pearl.sav` |
+-| GBA games | `emerald.sav`, `ruby.sav`, `sapphire.sav` ... |
+-
+-Other languages add theirs to the name (`heartgold-it.sav`, `black2-es.sav` ...).
+-
++The GBA games keep a save named after the game: `emerald.sav`, `ruby.sav`,
++`sapphire.sav` ...
++
++- **Saves from before:** the DS games' saves used to be named after the game
++  (`black2.sav`, `heartgold.sav`, `platinum.sav`, `diamond.sav` ..., and other
++  languages' such as `heartgold-it.sav` or `black2-es.sav`), one shared by every ROM
++  of that game. The first time one of them starts, that save is copied to each of the
++  game's ROMs, so each carries on from where it was, and the old file is kept as a
++  backup (`heartgold.sav.bak`). A ROM named like the old save (`HeartGold.nds`, or
++  the Switch's `rom.nds`) simply keeps using it. Which save a game uses is shown when
++  you rename it ([below](#hacks-your-own-names-and-pictures)), and in `game.log`.
+ - **Which files work:** a plain `.sav`, as melonDS, DeSmuME (Export Backup
+   Memory), flash carts (TWiLight Menu++, R4 and the like) and cartridge dump
+   tools (Checkpoint, JKSM, GodMode9) make it. A DraStic or DeSmuME `.dsv`, or an
+@@ -399,6 +411,28 @@ Other languages add theirs to the name (`heartgold-it.sav`, `black2-es.sav` ...)
+ - **SAVE BACKUPS** in a DS game's pause menu restores one of those for you: choose a dated
+   backup and RESTORE AND RESTART. The save it replaces is kept beside it with
+   `.before-restore.sav` added to its name.
++- **Renamed a ROM file?** Rename its `.sav` (and `.sav.state`) the same way, or it
++  starts a new game.
++
++### Hacks: your own names and pictures
++
++Hacks keep the code of the game they are made from, so the list calls Heartfelt Gold
++and Iridium both HEARTGOLD. Give any game the name you want: **RENAME** the chosen
++game with **F2** or a **right click** on a PC or Mac, **X** on a controller or the
++Switch (its own keyboard opens), or by **holding a finger on the game** on a phone.
++Type the name, then SAVE; RESET NAME undoes it. The box also shows the
++ROM's file and the save it uses. (On a Steam Deck, **STEAM + X** brings up its
++keyboard.)
++
++- The names are kept in `names.txt` beside your `saves` folder (on the Switch:
++  in `/switch/pokemon-ds-wide/`; on Android: in your ROMs folder), a line per game,
++  which you can also edit yourself: `Heartfelt Gold.nds=Heartfelt Gold`.
++- **A picture for each hack:** name it like the ROM and put it in the `icons`
++  folder (`icons/Heartfelt Gold.jpg` or `.png`), or beside the ROM
++  (`roms/Heartfelt Gold.jpg`). One named after the game's code
++  (`icons/IPKE.jpg`) is used for every ROM of that game that has none of its own.
++- **Desktop shortcuts and HOME Menu icons** follow: CREATE (or INSTALL) them again
++  after renaming, and each hack gets its own, with its name and picture.
+ 
+ ### Updates
+ 
+@@ -421,6 +455,10 @@ in a `cheats` folder (make it if it isn't there):
+ | iPhone and iPad | Files app: On My iPhone (or iPad) > Pokémon Fulldex > `cheats` |
+ | Nintendo Switch | `/switch/pokemon-ds-wide/cheats/` on the SD card |
+ 
++Every ROM has cheats of its own, named after the ROM file as its save is, so a game and its
++hacks, which all have the game's code, don't share them (a code made for HeartGold could
++break Heartfelt Gold). Which ones are on is kept for each ROM too.
++
+ - **Built in:** every DS game comes with 15 popular codes in the **POPULAR CHEATS** folder,
+   nothing to download: walk through walls, max money, all medicines (Rare Candy) and all
+   Poké Balls (Master Ball), wild shiny encounters, always catch, infinite HP and PP in
+@@ -428,23 +466,26 @@ in a `cheats` folder (make it if it isn't there):
+   Pokédex and fly anywhere (or faster walking, in the versions with no fly code). Every
+   one is off until you turn it on, for your version of the game (US,
+   Europe, Spain, Germany, France or Italy); the note under a code says which buttons it uses.
++  They are made for the games as released: a hack shows them too, but they may not work in it.
+ - **GBA games:** CHEATS in the GBA game's pause menu has 15 built in for Emerald, FireRed,
+   LeafGreen (1.0 and 1.1) and Ultra Violet: walk through walls (hold B), max money, 99 Rare
+   Candies, 99 Master Balls, wild shiny encounters, always catch, infinite HP and PP in battle,
+   double EXP, no wild encounters, fast egg hatch, all badges, all TMs and HMs, a complete
+   Pokédex and fly anywhere. Every one is off until you turn it on. They work on the game's
+   own memory (by pret's decompilations), not as codes, so nothing needs downloading.
+-- **A cheat database:** `usrcheat.dat` holds codes for every game. CHEATS opens this
+-  game's folders (a folder with any on shows how many, or the one that is on). Open a
+-  folder for its codes. The database's note on the chosen code shows under the menu.
+-  **ON NOW**, at the top, lists every code that is on. Codes of your own are listed
+-  above the folders. The one most people use is DeadSkullzJr's: download it from
++- **A cheat database:** `usrcheat.dat` holds codes for every game. CHEATS opens the
++  folders of the entry made for your ROM (a folder with any on shows how many, or the one
++  that is on). Open a folder for its codes. The database's note on the chosen code shows
++  under the menu. **ON NOW**, at the top, lists every code that is on. Codes of your own
++  are listed above the folders. The database knows a ROM by its header, so a hack, whose
++  header is not the game's, gets none of the game's codes from it: it has the codes of its
++  own (below), and **DATABASE INFO** in CHEATS says so. The one most people use is
++  DeadSkullzJr's: download it from
+   [his GBAtemp thread](https://gbatemp.net/threads/deadskullzjrs-nds-cheat-databases.488711/)
+   and put `usrcheat.dat` in the `cheats` folder.
+-- **Codes of your own:** a text file named after the game's code: `IREO.txt` (Black 2),
+-  `IRDO.txt` (White 2), `IRBO.txt` (Black), `IRAO.txt` (White), `IPKE.txt` (HeartGold),
+-  `IPGE.txt` (SoulSilver), `CPUE.txt` (Platinum). The cheat's name on a line, its code
+-  under it; as many cheats as you like, one after another:
++- **Codes of your own:** a text file named after the ROM file: `Heartfelt Gold.txt` for
++  `Heartfelt Gold.nds` (DATABASE INFO in CHEATS shows the name to use). The cheat's name on
++  a line, its code under it; as many cheats as you like, one after another:
+ 
+   ```
+   60 FPS battles
+@@ -453,7 +494,13 @@ in a `cheats` folder (make it if it isn't there):
+   12000E28 00000000
+   D2000000 00000000
+   ```
+-  melonDS's own cheat files (`IPKE.mch` and so on) work too.
++  melonDS's own cheat files work too, named the same way (`Heartfelt Gold.mch`).
++- **Cheats from before:** they were named after the game's code (`IPKE.txt`), and every ROM of
++  the game read the same ones. Those files are not read any more: rename one after the ROM it
++  is for (copy it for each hack that should have the codes); DATABASE INFO and `game.log` say
++  when one is left. A ROM called `rom.nds` (the older one-game downloads') goes on using the
++  game's code: `IREO.txt` (Black 2), `IRDO.txt` (White 2), `IRBO.txt` (Black), `IRAO.txt`
++  (White), `IPKE.txt` (HeartGold), `IPGE.txt` (SoulSilver), `CPUE.txt` (Platinum).
+ 
+ The codes must be for your version of the game (US or Europe). A cheat changes the game's
+ memory while it runs: **save first**, and turn it off if the game misbehaves.
+@@ -487,8 +534,9 @@ letter chooser with a controller or touch.
+ 
+ - **ROMs:** any English copy (US or Europe), trimmed or not, including the
+   "NDSi Enhanced" one; other languages as in [Supported games](#supported-games).
+-- **Saves:** `black2.sav` and `white2.sav` (`tools/bw2/convert_save.py` turns
+-  `.dsv` and Action Replay saves into the raw 512 KB save).
++- **Saves:** named after the ROM (`Black 2.sav`; `black2.sav` and `white2.sav`
++  before: [above](#use-your-own-save)). `tools/bw2/convert_save.py` turns `.dsv`
++  and Action Replay saves into the raw 512 KB save.
+ - **No version exclusives:** OTHER VERSION POKEMON in the pause menu (off to
+   start): wherever one version has an exclusive (Gothita, Cottonee, Vullaby,
+   Heracross, Magby...), each encounter there is as likely to be the other
+@@ -509,8 +557,8 @@ letter chooser with a controller or touch.
+ | ![HeartGold: Totodile against a wild Pidgey on Route 29, with FIGHT, BAG, RUN, POKÉMON and the party beside the battle](docs/screenshots/heartgold-totodile-battle.jpg) | ![SoulSilver: Lugia following you along Route 7](docs/screenshots/soulsilver-lugia-following.jpg) |
+ 
+ - **ROMs:** the languages in [Supported games](#supported-games).
+-- **Saves:** `soulsilver.sav` and `heartgold.sav` (the same format, so either
+-  game reads the other's).
++- **Saves:** named after the ROM (`soulsilver.sav` and `heartgold.sav` before:
++  [above](#use-your-own-save)); the same format, so either game reads the other's.
+ - **No version exclusives:** OTHER VERSION POKEMON in the pause menu (off to
+   start). Where the two versions have different wild Pokémon (Phanpy or
+   Teddiursa, Growlithe or Vulpix, Caterpie or Weedle...), each encounter can be
+@@ -531,9 +579,9 @@ letter chooser with a controller or touch.
+ | ![Black: a double battle, Reshiram and Excadrill against a wild Pelipper and Mantyke, the HP boxes down the edges](docs/screenshots/black-reshiram-double.jpg) | ![Black: Nimbasa City in widescreen](docs/screenshots/black-nimbasa.jpg) |
+ 
+ - **ROMs:** any English copy (US or Europe), trimmed or not; other languages as in [Supported games](#supported-games).
+-- **Saves:** `black.sav` and `white.sav` (the same format, so either game reads
+-  the other's; `tools/bw2/convert_save.py` turns `.dsv` and Action Replay saves
+-  into the raw 512 KB save).
++- **Saves:** named after the ROM (`black.sav` and `white.sav` before); the same
++  format, so either game reads the other's. `tools/bw2/convert_save.py` turns
++  `.dsv` and Action Replay saves into the raw 512 KB save.
+ - **No version exclusives:** OTHER VERSION POKEMON in the pause menu (off to
+   start), as in Black 2 and White 2: Gothita or Solosis, Cottonee or Petilil,
+   Vullaby or Rufflet, Murkrow or Misdreavus, and the rest, each encounter as
+@@ -552,7 +600,7 @@ letter chooser with a controller or touch.
+ 
+ - **ROM:** the English version, US or Europe (both game code `CPUE`), or the
+   Spanish (`CPUS`) or French revision 0 (`CPUF`) versions, trimmed or not.
+-- **Save:** `platinum.sav`.
++- **Save:** named after the ROM (`platinum.sav` before).
+ - **What you get:** Sinnoh in widescreen, the snow and rain reaching the edges
+   of the view; battles with their buttons and moves beside the action; the X
+   menu at the right edge of the view, and the Bag, party, Pokédex, map and
+@@ -568,8 +616,8 @@ letter chooser with a controller or touch.
+   Spanish (`ADAS`), German (`ADAD`) and Italian (`ADAI`); Pearl also in French
+   (`APAF`), Spanish (`APAS`), German (`APAD`) and Korean (`APAK`). Japanese
+   Diamond and Pearl are not supported yet.
+-- **Save:** `diamond.sav` or `pearl.sav` (other languages have their own, such as
+-  `pearl-fr.sav`).
++- **Save:** named after the ROM (`diamond.sav` or `pearl.sav` before; other
++  languages had their own, such as `pearl-fr.sav`).
+ - **What you get:** Platinum's widescreen layouts on Sinnoh's first adventure:
+   battles with their buttons and moves beside the action, and the Bag, party,
+   Pokédex, Trainer Card and other menus laid out for one screen. Still
+diff --git a/frontend/cheats.h b/frontend/cheats.h
+index d9ac556..68e4615 100644
+--- a/frontend/cheats.h
++++ b/frontend/cheats.h
+@@ -1,17 +1,22 @@
+ #pragma once
+ // Cheats (Action Replay codes), run by melonDS's own engine (melonDS/src/AREngine.cpp) every
+ // time the DS's second processor answers the screen's vertical blank, as a real Action Replay
+-// does. They come from the cheats folder (beside the saves folder, or in the save's folder):
++// does. They come from the cheats folder (beside the saves folder, or in the save's folder),
++// where each ROM has files of its own, named after the ROM file as its save is (Heartfelt
++// Gold.nds: Heartfelt Gold.sav), so that a game and its hacks, which all have the game's code,
++// do not share their codes (NameFor):
+ //
+-//   <game code>.txt   codes of your own: a line with the cheat's name, then its code lines
++//   <ROM name>.txt    codes of your own: a line with the cheat's name, then its code lines
+ //                     ("92247612 00002801"); a line starting with # is a comment
+-//   <game code>.mch   a melonDS cheat file (as melonDS saves them)
+-//   usrcheat.dat      the R4 / DeSmuME cheat database: this game's codes are read from it
++//   <ROM name>.mch    a melonDS cheat file (as melonDS saves them)
++//   usrcheat.dat      the R4 / DeSmuME cheat database: the entry made for this very ROM is read
++//                     from it (by the checksum of the ROM's header)
+ //
+ // Every DS game also comes with 15 popular codes built in (builtin_cheats.h), in the folder
+-// POPULAR CHEATS: none is on until the player turns it on.
++// POPULAR CHEATS: none is on until the player turns it on. (Those go by the game code, the
++// program having no list of the ROMs' headers: a hack is offered its game's.)
+ //
+-// Which are on is kept in <game code>-on.txt there (one name a line), so the game list's
++// Which are on is kept in <ROM name>-on.txt there (one name a line), so the game list's
+ // other games and a new database keep theirs. CHEATS in the pause menu lists the database's
+ // folders (a folder shows how many of its codes are on); opening one turns its codes on and off.
+ // Codes with no folder, such as a text file of your own, are listed above the folders.
+@@ -39,7 +44,7 @@ struct Cheat
+ {
+     std::string name;     // its own name, in the menus' font (the folder is separate, below)
+     std::string category; // the database folder it belongs to; empty when it has none
+-    std::string key;      // as kept in <code>-on.txt: where it came from and its full name
++    std::string key;      // as kept in <ROM name>-on.txt: where it came from and its full name
+     std::vector<melonDS::u32> code;
+     bool on = false;
+     int group = -1;       // a folder of the database in which only one may be on (-1: none)
+@@ -121,6 +126,22 @@ inline std::vector<std::string> Lines(const std::string& text, size_t width=38)
+     return lines;
+ }
+ 
++// What a ROM's files in the cheats folder are called: the ROM's file name without its extension
++// (Heartfelt Gold.nds: Heartfelt Gold), as its save is named (Launcher::ReadGame). Hacks keep the
++// game code of the game they are made from, and the codes were once kept by that code (IPKE.txt),
++// so every ROM of the game shared them. A ROM called rom.nds (the one-game downloads' name for
++// theirs: it tells nothing of the game, and there is only the one) still goes by the game's code.
++inline std::string NameFor(const std::string& romPath, const std::string& gameCode)
++{
++    const size_t slash = romPath.find_last_of("/\\");
++    const std::string file = slash == std::string::npos ? romPath : romPath.substr(slash + 1);
++    std::string stem = file, lower = file;
++    const size_t dot = stem.find_last_of('.');
++    if (dot != std::string::npos && dot > 0) stem.resize(dot);
++    for (char& c : lower) c = (char)tolower((unsigned char)c);
++    return stem.empty() || lower == "rom.nds" ? gameCode : stem;
++}
++
+ struct List
+ {
+     // A database folder, in the order the file lists them. Codes with an empty category
+@@ -135,8 +156,10 @@ struct List
+     std::vector<Cheat> items;
+     std::vector<Folder> folders;
+     std::string folder, code;
++    std::string romName; // what the ROM's files are called here (NameFor)
+     std::vector<std::string> messages; // Player-readable failures and missing game entries.
+     std::vector<std::string> sources; // what was read, for game.log
++    std::vector<std::string> notes;   // what was found and not used, or not found, for game.log
+ 
+     static bool Exists(const std::string& p)
+     {
+@@ -207,13 +230,21 @@ struct List
+         return std::to_string(n) + " ON";
+     }
+ 
+-    void Load(const std::string& cheatFolder, const std::string& gameCode, const unsigned char* romHeader)
++    // romPath: the ROM's file, which the files' names come from (NameFor); gameCode: its game code,
++    // by which the database and the built-in codes know the game; romHeader: the ROM's first 0x200
++    // bytes, or null.
++    void Load(const std::string& cheatFolder, const std::string& romPath, const std::string& gameCode,
++              const unsigned char* romHeader)
+     {
+         items.clear();
+         folders.clear();
+         sources.clear();
++        messages.clear();
++        notes.clear();
+         folder = cheatFolder;
+         code = gameCode;
++        romName = NameFor(romPath, gameCode);
++        if (romName.empty()) return;
+         // Built in (builtin_cheats.h): 15 popular codes for this release, all off until turned on.
+         // First, so POPULAR CHEATS is the first folder.
+         if (const BuiltinCheats::Game* g = BuiltinCheats::Find(code.c_str()))
+@@ -234,7 +265,7 @@ struct List
+             sources.push_back("built in (" + std::to_string(g->count) + " codes)");
+         }
+         // Codes of one's own: a name line, then code lines.
+-        const std::string txt = folder + "/" + code + ".txt";
++        const std::string txt = folder + "/" + romName + ".txt";
+         if (FILE* f = fopen(txt.c_str(), "r"))
+         {
+             char buf[512];
+@@ -262,7 +293,7 @@ struct List
+             sources.push_back(txt);
+         }
+         // melonDS's own cheat files.
+-        const std::string mch = folder + "/" + code + ".mch";
++        const std::string mch = folder + "/" + romName + ".mch";
+         if (Exists(mch))
+         {
+             melonDS::ARCodeFile file(mch);
+@@ -277,8 +308,10 @@ struct List
+             }
+             else messages.push_back("CANNOT READ THE MELONDS CHEAT FILE.");
+         }
+-        // The R4 / DeSmuME database: this game's entry (the one made for this very ROM if there
+-        // is one, by the checksum of its header, as melonDS picks it).
++        // The R4 / DeSmuME database: the entry made for this very ROM, by the checksum of its header
++        // (melonDS's import lists those first). Not another ROM's of the same game, as it once took
++        // when none matched: a hack has the game's code too, and the codes of the game it is made
++        // from are not safe to run in it. Its own codes go in its own files (above).
+         const std::string dat = folder + "/usrcheat.dat";
+         if (Exists(dat) && romHeader)
+         {
+@@ -290,9 +323,16 @@ struct List
+             {
+                 melonDS::ARDatabaseEntryList entries = db.GetEntriesByGameCode(gc);
+                 const melonDS::u32 sum = ~melonDS::CRC32(romHeader, 0x200, 0);
+-                const melonDS::ARDatabaseEntry* pick = entries.empty() ? nullptr : &entries[0];
++                const melonDS::ARDatabaseEntry* pick = nullptr;
+                 for (const auto& e : entries)
+                     if (e.Checksum == sum) pick = &e;
++                if (!pick && !entries.empty())
++                {
++                    char sumText[16];
++                    snprintf(sumText, sizeof sumText, "%08X", (unsigned)sum);
++                    notes.push_back(dat + " has " + std::to_string(entries.size()) + " for " + code + ", none made for this ROM (header checksum " + sumText + ")");
++                    messages.push_back("USRCHEAT.DAT HAS NO ENTRY MADE FOR THIS ROM, ONLY FOR OTHER ROMS OF " + code + ": A HACK GETS NONE OF ITS GAME'S CODES FROM IT.");
++                }
+                 if (pick)
+                 {
+                     int groups = 0;
+@@ -320,6 +360,23 @@ struct List
+                 }
+             }
+         }
++        // Codes kept the old way, by the game's code (IPKE.txt), which every ROM of the game shared:
++        // not read any more, so game.log and DATABASE INFO say how to have them. (Capitals are not
++        // told apart on Windows, a Mac and the Switch, where ipke.nds reads IPKE.txt as its own.)
++        auto lower = [](std::string t) {
++            for (char& c : t) c = (char)tolower((unsigned char)c);
++            return t;
++        };
++        if (!code.empty() && lower(code) != lower(romName))
++            for (const char* ext : { ".txt", ".mch" })
++                if (Exists(folder + "/" + code + ext))
++                {
++                    notes.push_back(folder + "/" + code + ext + " is not read (codes are kept for each ROM now): name it " + romName + ext + " to use it with this ROM");
++                    messages.push_back(Shown(code + ext, 64) + " IS NOT READ ANY MORE (CODES ARE KEPT FOR EACH ROM): NAME IT " + Shown(romName + ext, 256) + " FOR THIS ROM.");
++                }
++        if (sources.empty()) notes.push_back("none for this ROM: its own codes go in " + txt);
++        if (!Exists(txt) && !Exists(mch))
++            messages.push_back("CODES OF YOUR OWN FOR THIS ROM GO IN " + Shown(romName + ".txt", 256) + " IN THE CHEATS FOLDER.");
+         // Which are on.
+         if (FILE* f = fopen(OnFile().c_str(), "r"))
+         {
+@@ -335,7 +392,7 @@ struct List
+         }
+     }
+ 
+-    std::string OnFile() const { return folder + "/" + code + "-on.txt"; }
++    std::string OnFile() const { return folder + "/" + romName + "-on.txt"; }
+ 
+     // Turns cheat i on or off (another of its folder off, if only one may be on), and keeps it.
+     void Toggle(size_t i)
+diff --git a/frontend/launcher.h b/frontend/launcher.h
+index 2af4eb4..6c07c62 100644
+--- a/frontend/launcher.h
++++ b/frontend/launcher.h
+@@ -48,15 +48,25 @@ struct Game
+     int platform = DS;
+     std::string rom;      // the ROM's full path
+     std::string folder;   // where its save (and a funcs.txt of the player's own) live
++    // Where its save is when that is not `folder` (the Switch: the saves folder inside it,
++    // switch_platform.cpp); empty: `folder` (SaveFolder).
++    std::string saveDir;
+     std::string code;     // the game code, e.g. IREO
+-    std::string name;     // as shown, e.g. POKEMON BLACK 2
+-    std::string saveName; // e.g. black2.sav
++    std::string name;     // as shown, e.g. POKEMON BLACK 2 (the player's own name for it, if any)
++    std::string ownName;  // the game's own name, shown when the player has given it none
++    std::string custom;   // the player's own name for it, as typed (RENAME, names.txt); empty: none
++    std::string saveName; // named after the ROM: Black 2.nds has Black 2.sav (SetSaveName)
++    // The game's save before each ROM had its own (black2.sav: shared by every ROM of the game),
++    // handed on once (CarryOverSave). Empty for a game that never had one.
++    std::string legacySave;
+     bool known = false;   // one of the games this program plays
+     bool hasSave = false;
+     bool hasIcon = false;
+     uint32_t icon[32 * 32] = {}; // ARGB, transparent where the icon is
+     // A larger picture for the game, if the player has one (FindArt): ARGB, Art x Art pixels.
+     std::vector<uint32_t> art;
++    // The picture is one the player put in icons/ or beside the ROM (not a program's icon).
++    bool artOwn = false;
+     // Set when the same game is also in another folder: this one's folder, shown under it.
+     std::string where;
+     // A game on its way (AddComingSoon): its tile says so and it cannot be played.
+@@ -169,6 +179,123 @@ inline bool EndsWithNds(const std::string& name)
+     return ext == ".nds";
+ }
+ 
++inline std::string Upper(std::string s)
++{
++    for (char& c : s) c = (char)toupper((unsigned char)c);
++    return s;
++}
++
++// A path's last part, the file's name (Heartfelt Gold.nds), and that without its extension
++// (Heartfelt Gold). (A path on Windows can have either slash.)
++inline std::string FileName(const std::string& path)
++{
++    const size_t slash = path.find_last_of("/\\");
++    return slash == std::string::npos ? path : path.substr(slash + 1);
++}
++inline std::string FileStem(const std::string& path)
++{
++    std::string name = FileName(path);
++    const size_t dot = name.find_last_of('.');
++    if (dot != std::string::npos && dot > 0) name.resize(dot);
++    return name;
++}
++
++inline bool FileExists(const std::string& path)
++{
++    struct stat st;
++    return stat(path.c_str(), &st) == 0;
++}
++
++// The folder the game's save is in: its own folder, or the one set for its saves (Game::saveDir).
++inline std::string SaveFolder(const Game& g) { return g.saveDir.empty() ? g.folder : g.saveDir; }
++
++// The game's save is `name`, in its saves' folder: there already, or to come from the save the
++// game had before (CarryOverSave), which the list then shows as found too.
++inline void SetSaveName(Game& g, const std::string& name)
++{
++    g.saveName = name;
++    const std::string dir = SaveFolder(g);
++    g.hasSave = FileExists(dir + "/" + name) ||
++                (!g.legacySave.empty() && Upper(name) != Upper(g.legacySave) && FileExists(dir + "/" + g.legacySave));
++}
++
++// A copy of a file under a new name (written beside it first, then given the name, so that a copy
++// cut short is never taken for the file). False if it could not be made.
++inline bool CopyFileAs(const std::string& from, const std::string& to)
++{
++    FILE* in = fopen(from.c_str(), "rb");
++    if (!in) return false;
++    const std::string tmp = to + ".tmp";
++    FILE* out = fopen(tmp.c_str(), "wb");
++    bool ok = out != nullptr;
++    char buf[65536];
++    size_t n;
++    while (ok && (n = fread(buf, 1, sizeof buf, in)) > 0) ok = fwrite(buf, 1, n, out) == n;
++    ok = ok && !ferror(in);
++    fclose(in);
++    if (out) ok = fclose(out) == 0 && ok;
++    // (`to` is not there, so a plain rename does: Windows and the Switch rename onto no file.)
++    ok = ok && rename(tmp.c_str(), to.c_str()) == 0;
++    if (!ok) remove(tmp.c_str());
++    return ok;
++}
++
++// The ROMs of a game used to share one save, named after the game (heartgold.sav), so a game and
++// its hacks (HeartGold, Heartfelt Gold, Iridium: all HeartGold's game code) wrote over each other's.
++// Now each ROM has its own (SetSaveName), and when one of them starts while the shared save is
++// still there, before it can save over it, the shared save is handed on: copied to each ROM of
++// that game with its saves in the same folder that has none of its own yet, so that each carries
++// on from where the game was. The shared one is then put aside as heartgold.sav.bak, and a ROM
++// added later starts a new game rather than an old one; unless a ROM still has it as its save
++// (one named like it, HeartGold.nds, or a rom.nds), which keeps it. The SAVE STATE goes with it
++// only when one ROM takes it: a state is of one ROM, and another's would not load right. What was
++// done goes to game.log.
++inline void CarryOverSave(const std::vector<Game>& games, const Game& chosen)
++{
++    if (chosen.legacySave.empty()) return;
++    const std::string dir = SaveFolder(chosen);
++    const std::string shared = dir + "/" + chosen.legacySave;
++    if (!FileExists(shared)) return;
++    std::vector<const Game*> heirs;
++    bool inUse = false;
++    for (const Game& g : games)
++    {
++        if (g.comingSoon || g.platform != chosen.platform || g.code != chosen.code || SaveFolder(g) != dir) continue;
++        if (Upper(g.saveName) == Upper(g.legacySave)) inUse = true;
++        else if (std::find_if(heirs.begin(), heirs.end(), [&](const Game* h) { return Upper(h->saveName) == Upper(g.saveName); }) == heirs.end())
++            heirs.push_back(&g);
++    }
++    bool failed = false;
++    for (const Game* g : heirs)
++    {
++        const std::string own = dir + "/" + g->saveName;
++        if (FileExists(own)) continue;
++        if (!CopyFileAs(shared, own))
++        {
++            failed = true;
++            fprintf(stderr, "[launcher] save: could not copy %s to %s\n", shared.c_str(), own.c_str());
++            continue;
++        }
++        fprintf(stderr, "[launcher] save: %s handed on to %s\n", chosen.legacySave.c_str(), g->saveName.c_str());
++        if (heirs.size() == 1 && !inUse && FileExists(shared + ".state") && !FileExists(own + ".state") &&
++            CopyFileAs(shared + ".state", own + ".state"))
++            fprintf(stderr, "[launcher] save: its save state too\n");
++    }
++    // (Kept where it is when a copy failed: tried again next time.)
++    if (failed || inUse) return;
++    for (const std::string& file : { shared, shared + ".state" })
++    {
++        if (!FileExists(file)) continue;
++        for (int k = 1; k <= 9; k++)
++        {
++            const std::string bak = file + (k == 1 ? std::string(".bak") : ".bak" + std::to_string(k));
++            if (FileExists(bak)) continue;
++            if (rename(file.c_str(), bak.c_str()) == 0) fprintf(stderr, "[launcher] save: the shared one kept as %s\n", bak.c_str());
++            break;
++        }
++    }
++}
++
+ // Reads a ROM's game code, title and icon. False if it is not a DS ROM.
+ inline bool ReadGame(const std::string& rom, const std::string& folder, Game& g)
+ {
+@@ -223,16 +350,19 @@ inline bool ReadGame(const std::string& rom, const std::string& folder, Game& g)
+     {
+         g.known = true;
+         g.name = k->name;
+-        g.saveName = k->save;
++        g.legacySave = k->save;
+     }
+-    else
+-    {
+-        if (g.name.empty()) g.name = rom.substr(rom.find_last_of('/') + 1);
+-        g.saveName = "game.sav";
+-    }
+-    for (char& c : g.name) c = (char)toupper((unsigned char)c);
+-    struct stat st;
+-    g.hasSave = stat((folder + "/" + g.saveName).c_str(), &st) == 0;
++    else if (g.name.empty()) g.name = FileName(rom);
++    g.name = Upper(g.name);
++    g.ownName = g.name;
++    // The save is named after the ROM (Heartfelt Gold.nds: Heartfelt Gold.sav), so that every ROM
++    // has its own, hacks of a game included. The game's save as it was spelt (heartgold.sav) for a
++    // ROM named like it (HeartGold.nds: the same file where capitals are not told apart, as on
++    // Windows, a Mac and the Switch), and for a rom.nds, the one-game downloads' name for theirs,
++    // whose programs use it too.
++    std::string save = FileStem(rom) + ".sav";
++    if (g.known && (Upper(FileName(rom)) == "ROM.NDS" || Upper(save) == Upper(g.legacySave))) save = g.legacySave;
++    SetSaveName(g, save);
+     return true;
+ }
+ 
+@@ -307,11 +437,13 @@ inline bool NroIcon(const std::string& nro, std::vector<unsigned char>& jpeg)
+     return len > 0 && ReadFile(nro, jpeg, size + (long)off, (long)len);
+ }
+ 
+-// The game's larger picture, from the first of: <list folder>/icons/<game code>.jpg or .png (e.g.
+-// icons/IREO.jpg), a picture with the ROM's name (Black 2.nds: Black 2.jpg or .png), icon.jpg in
+-// the game's folder, or the Homebrew Menu icon of a one-game program (.nro) in its folder (not in
+-// the list's own folder: that one is the all-games program, whose icon is no game's). The
+-// downloads hold none: these are the player's own.
++// The game's larger picture, from the first of: one named after the ROM, in <list folder>/icons/
++// or beside the ROM (Heartfelt Gold.nds: icons/Heartfelt Gold.jpg, or Heartfelt Gold.jpg beside
++// it; .jpg or .png), so that each hack of a game can have its own; one for the game code in
++// icons/ (e.g. icons/IREO.jpg: every ROM of the game); icon.jpg in the game's folder; or the
++// Homebrew Menu icon of a one-game program (.nro) in its folder (not in the list's own folder:
++// that one is the all-games program, whose icon is no game's). The downloads hold none: these are
++// the player's own.
+ // Square ARGB pixels (side n) at side m: smooth both ways (bilinear when larger, the average of
+ // the pixels covered when smaller), with the colours weighted by their opacity.
+ inline std::vector<uint32_t> ResizeArt(const std::vector<uint32_t>& src, int n, int m)
+@@ -371,10 +503,21 @@ inline std::vector<uint32_t> GamePicture(const Game& g, int m)
+ inline void FindArt(Game& g, const std::string& listFolder)
+ {
+     std::vector<unsigned char> data;
+-    const std::string base = g.rom.substr(0, g.rom.size() - 4);
+-    for (const std::string& path : { listFolder + "/icons/" + g.code + ".jpg", listFolder + "/icons/" + g.code + ".png",
+-                                     base + ".jpg", base + ".png", g.folder + "/icon.jpg" })
+-        if (ReadFile(path, data) && LoadArt(data.data(), data.size(), g.art)) return;
++    std::vector<std::string> own;
++    if (!g.comingSoon)
++    {
++        const std::string stem = FileStem(g.rom), base = g.rom.substr(0, g.rom.size() - FileName(g.rom).size()) + stem;
++        own = { listFolder + "/icons/" + stem + ".jpg", listFolder + "/icons/" + stem + ".png", base + ".jpg", base + ".png" };
++    }
++    own.push_back(listFolder + "/icons/" + g.code + ".jpg");
++    own.push_back(listFolder + "/icons/" + g.code + ".png");
++    for (const std::string& path : own)
++        if (ReadFile(path, data) && LoadArt(data.data(), data.size(), g.art))
++        {
++            g.artOwn = true;
++            return;
++        }
++    if (ReadFile(g.folder + "/icon.jpg", data) && LoadArt(data.data(), data.size(), g.art)) return;
+     if (g.folder == listFolder) return;
+     if (DIR* d = opendir(g.folder.c_str()))
+     {
+@@ -425,6 +568,203 @@ inline void Sort(std::vector<Game>& games)
+     });
+ }
+ 
++// ---------------------------------------------------------------------------------------------
++// The player's own names for games (RENAME in the list), so that hacks, which keep the game code
++// of the game they are made from, show their own: Heartfelt Gold and Iridium rather than two
++// HeartGolds. Kept in names.txt in the list's folder (where its icons folder is), a line per
++// game, the ROM's file name, '=' and the name:
++//     Heartfelt Gold.nds=Heartfelt Gold
++// (A ROM outside that folder and its roms folder by its whole path: the Switch's older one-game
++// downloads each have a rom.nds.)
++
++// The longest name RENAME takes, in characters (the Switch's keyboard shows its header up to 32;
++// the list's tiles show some 15 to 20 before a name is cut short).
++constexpr size_t NameMax = 32;
++
++// UTF-8: the number of characters, the last one taken off, and the text cut to `max` characters.
++inline size_t Utf8Length(const std::string& s)
++{
++    size_t n = 0;
++    for (unsigned char c : s) n += (c & 0xC0) != 0x80;
++    return n;
++}
++inline void Utf8PopBack(std::string& s)
++{
++    while (!s.empty() && ((unsigned char)s.back() & 0xC0) == 0x80) s.pop_back();
++    if (!s.empty()) s.pop_back();
++}
++inline std::string Utf8Cut(std::string s, size_t max)
++{
++    while (Utf8Length(s) > max) Utf8PopBack(s);
++    return s;
++}
++
++// A name with no spaces at its ends and no control characters (which a line of names.txt cannot
++// hold).
++inline std::string CleanName(const std::string& name)
++{
++    std::string out;
++    for (char c : name)
++        if ((unsigned char)c >= 0x20 && c != 0x7F) out += c;
++    const size_t a = out.find_first_not_of(' '), b = out.find_last_not_of(' ');
++    return a == std::string::npos ? std::string() : out.substr(a, b - a + 1);
++}
++
++// A name as the list's font can show it (ui.h: capitals, digits and some marks): in capitals, É
++// and é as its É, the other accented letters (UTF-8) as plain ones, and characters it has no
++// letter for (other alphabets, symbols) left out.
++inline std::string ListText(const std::string& utf8)
++{
++    // (Latin-1's letters U+00C0 to U+00FF as plain ones; '*': not a letter, left out.)
++    static const char latin[] = "AAAAAAACEEEEIIIIDNOOOOO*OUUUUYPSAAAAAAACEEEEIIIIDNOOOOO*OUUUUYPY";
++    std::string out;
++    for (size_t i = 0; i < utf8.size();)
++    {
++        const unsigned char c = (unsigned char)utf8[i];
++        const int n = c < 0x80 ? 1 : (c & 0xE0) == 0xC0 ? 2 : (c & 0xF0) == 0xE0 ? 3 : (c & 0xF8) == 0xF0 ? 4 : 0;
++        if (n == 0 || i + n > utf8.size())
++        {
++            i++;
++            continue;
++        }
++        uint32_t cp = n == 1 ? c : c & (0x7F >> n);
++        for (int k = 1; k < n; k++) cp = cp << 6 | ((unsigned char)utf8[i + k] & 0x3F);
++        i += n;
++        if (cp < 0x20 || cp == 0x7F) continue;
++        if (cp < 0x80) out += (char)toupper((int)cp);
++        else if (cp == 0xC9 || cp == 0xE9) out += '\x05';
++        else if (cp >= 0xC0 && cp <= 0xFF && latin[cp - 0xC0] != '*') out += latin[cp - 0xC0];
++    }
++    return out;
++}
++
++// The game's own name as a title (Pokemon HeartGold), and the name it goes by: the player's own
++// for it if they gave it one, else that. (The window's title, desktop shortcuts', HOME Menu
++// icons', and the name RENAME starts from.)
++inline std::string OwnDisplayName(const Game& g)
++{
++    if (g.platform == DS)
++        if (const KnownGame* k = Known(g.code)) return k->name;
++    return TitleCase(g.ownName.empty() ? g.name : g.ownName);
++}
++inline std::string DisplayName(const Game& g) { return g.custom.empty() ? OwnDisplayName(g) : g.custom; }
++
++inline std::string NamesFile(const std::string& listFolder) { return listFolder + "/names.txt"; }
++
++// What a game's line in names.txt starts with: its ROM's file name, or its whole path for a ROM
++// elsewhere than the list's folder and its roms folder.
++inline std::string NameKey(const Game& g, const std::string& listFolder)
++{
++    const std::string file = FileName(g.rom);
++    const std::string dir = g.rom.substr(0, g.rom.size() - file.size());
++    if (dir == listFolder + "/" || dir == listFolder + "/roms/") return file;
++    return g.rom;
++}
++
++// Where the name starts in the line of names.txt for `key` (capitals or not, as file names are on
++// Windows, the Switch's SD card and a phone's storage; spaces before the '=' allowed), or 0 when
++// the line is another game's.
++inline size_t NameAt(const std::string& line, const std::string& key)
++{
++    if (key.empty() || line.size() <= key.size() || Upper(line.substr(0, key.size())) != Upper(key)) return 0;
++    size_t i = key.size();
++    while (i < line.size() && line[i] == ' ') i++;
++    return i < line.size() && line[i] == '=' ? i + 1 : 0;
++}
++
++inline std::vector<std::string> ReadLines(const std::string& path)
++{
++    std::vector<std::string> lines;
++    if (FILE* f = fopen(path.c_str(), "r"))
++    {
++        char buf[2048];
++        while (fgets(buf, sizeof buf, f))
++        {
++            std::string l = buf;
++            while (!l.empty() && (l.back() == '\n' || l.back() == '\r')) l.pop_back();
++            // (A UTF-8 byte order mark, from a text editor on Windows.)
++            if (lines.empty() && l.compare(0, 3, "\xEF\xBB\xBF") == 0) l = l.substr(3);
++            lines.push_back(l);
++        }
++        fclose(f);
++    }
++    return lines;
++}
++
++// The player's name for the game shown (name: empty for the game's own again).
++inline void SetCustomName(Game& g, const std::string& name)
++{
++    if (g.ownName.empty()) g.ownName = g.name;
++    g.custom = Utf8Cut(CleanName(name), NameMax);
++    if (g.custom == OwnDisplayName(g)) g.custom.clear(); // (the game's own name typed: none of the player's)
++    g.name = g.custom.empty() ? g.ownName : ListText(g.custom);
++    if (g.name.empty()) g.name = g.ownName; // (a name of only letters the font has not: the game's own)
++}
++
++// The names in names.txt given to the games it has a line for.
++inline void ApplyNames(std::vector<Game>& games, const std::string& listFolder)
++{
++    const std::vector<std::string> lines = ReadLines(NamesFile(listFolder));
++    if (lines.empty()) return;
++    for (Game& g : games)
++    {
++        if (g.comingSoon) continue;
++        const std::string key = NameKey(g, listFolder);
++        for (const std::string& l : lines)
++            if (const size_t at = NameAt(l, key)) SetCustomName(g, l.substr(at)); // (the last line for it counts)
++    }
++}
++
++// The player's name for a game kept in names.txt (empty, or the game's own name: its line taken
++// out), the other lines as they were. False if the file could not be written.
++inline bool StoreName(const std::string& listFolder, const Game& g, const std::string& name)
++{
++    const std::string key = NameKey(g, listFolder), clean = Utf8Cut(CleanName(name), NameMax);
++    std::vector<std::string> lines;
++    for (const std::string& l : ReadLines(NamesFile(listFolder)))
++        if (!NameAt(l, key) && !l.empty()) lines.push_back(l);
++    if (!clean.empty() && clean != OwnDisplayName(g)) lines.push_back(key + "=" + clean);
++    FILE* f = fopen(NamesFile(listFolder).c_str(), "w");
++    if (!f) return false;
++    bool ok = true;
++    for (const std::string& l : lines) ok = fprintf(f, "%s\n", l.c_str()) >= 0 && ok;
++    return fclose(f) == 0 && ok;
++}
++
++// ---------------------------------------------------------------------------------------------
++// "--game": a game started straight away (desktop shortcuts, the Switch's HOME Menu icons).
++
++// What names the game there: its game code (IREO) when it is the only ROM of its game in the
++// list, else its ROM's file name ("Heartfelt Gold.nds"), which tells it from the game's others;
++// or, when another of them has that file name too (in another folder), its whole path.
++inline std::string GameArg(const std::vector<Game>& games, const Game& g)
++{
++    bool others = false;
++    for (const Game& o : games)
++        if (&o != &g && !o.comingSoon && o.platform == g.platform && o.code == g.code && o.rom != g.rom)
++        {
++            if (Upper(FileName(o.rom)) == Upper(FileName(g.rom))) return g.rom;
++            others = true;
++        }
++    return others ? FileName(g.rom) : g.code;
++}
++
++// The game "--game <arg>" names: a ROM's path or file name, else a game code (the first ROM of
++// that game, as before there were names), capitals or not; -1 for none that `usable` allows.
++template <class Usable>
++inline int FindGame(const std::vector<Game>& games, const std::string& arg, Usable usable)
++{
++    const std::string a = Upper(arg), file = Upper(FileName(arg));
++    for (int pass = 0; pass < 3 && !a.empty(); pass++)
++        for (size_t i = 0; i < games.size(); i++)
++        {
++            const Game& g = games[i];
++            if (g.comingSoon || !usable(g)) continue;
++            if (pass == 0 ? Upper(g.rom) == a : pass == 1 ? Upper(FileName(g.rom)) == file : Upper(g.code) == a) return (int)i;
++        }
++    return -1;
++}
++
+ // The list's colours (ARGB): near-black with white text and red details, on the Switch and on a PC.
+ struct Theme
+ {
+@@ -844,11 +1184,20 @@ inline void Draw(Canvas& c, const std::vector<Game>& games, int tab, int selecte
+             c.Fill(x, y + tile / 2 - 8 * bs, tile, 16 * bs, th.band);
+             c.Text(x + (tile - Canvas::TextWidth(soon, bs)) / 2, y + tile / 2 - 4 * bs, soon, bs, th.title);
+         }
+-        // The name (shortened: POKEMON is the same for all) and the save.
++        // The name (shortened: POKEMON is the same for all) and the save. (Drawn as it is, not
++        // through the interface's language: a name the player gave is not one of its texts.)
+         std::string name = g.name;
+-        if (name.rfind("POKEMON ", 0) == 0) name = name.substr(8);
+-        const int ns = Canvas::TextWidth(name, s) <= tile ? s : std::max(1, s - 1);
+-        c.Text(x + (tile - Canvas::TextWidth(name, ns)) / 2, y + tile + 3 * s, name, ns, sel ? th.nameSel : th.name);
++        for (const std::string prefix : { "POKEMON ", "POK\x05MON " })
++            if (name.size() > prefix.size() && name.compare(0, prefix.size(), prefix) == 0) name = name.substr(prefix.size());
++        const int ns = Canvas::TextWidthRaw(name, s) <= tile ? s : std::max(1, s - 1);
++        // (A long name of the player's own: cut short to the tile and the gaps beside it.)
++        if (Canvas::TextWidthRaw(name, ns) > tile + 2 * grid.gap)
++        {
++            while (name.size() > 1 && Canvas::TextWidthRaw(name + "..", ns) > tile + 2 * grid.gap) name.pop_back();
++            while (!name.empty() && name.back() == ' ') name.pop_back();
++            name += "..";
++        }
++        c.TextRaw(x + (tile - Canvas::TextWidthRaw(name, ns)) / 2, y + tile + 3 * s, name, ns, sel ? th.nameSel : th.name);
+         if (sel && th.selBar) c.Fill(x + tile / 4, y + tile + (UiLang::Tall() ? 31 : 19) * s, tile / 2, s, th.selBar);
+         std::string sub = g.comingSoon ? "COMING SOON" : !g.known ? "NOT PLAYABLE" : g.hasSave ? "SAVE FOUND" : "NEW GAME";
+         if (!g.where.empty() && g.known) sub = (g.hasSave ? "SAVE " : "NEW ") + g.where; // e.g. SAVE IN BLACK2
+@@ -858,9 +1207,14 @@ inline void Draw(Canvas& c, const std::vector<Game>& games, int tab, int selecte
+     // More games below the ones shown. (None drawn for above: under the tabs it looked like one
+     // of their underlines, and the cut tiles at the top say it already.)
+     if (scroll + (bottom - top) < v.height - grid.gap) c.Fill(c.w / 2 - 8 * s, bottom - 2 * s, 16 * s, s, th.hint);
+-    const std::string hint = !note.empty() ? note : !hintText.empty() ? hintText : "A: PLAY    Y: SETTINGS    L / R: TABS    +: QUIT";
+-    int hintScale=s;
+-        while(hintScale>1 && Canvas::TextWidth(hint,hintScale)>c.w-8)--hintScale;
++    std::string hint = !note.empty() ? note : !hintText.empty() ? hintText : "A: PLAY    X: RENAME    Y: SETTINGS    L / R: TABS    +: QUIT";
++    // (Too wide for the screen, a small window's: the gaps between its parts narrowed first, then
++    // the letters smaller. Two spaces stay between parts, which the translation tells them by.)
++    for (const std::string gap : { "    ", "   " })
++        if (Canvas::TextWidth(hint, s) > c.w - 8)
++            for (size_t at = 0; (at = hint.find(gap, at)) != std::string::npos; at += gap.size() - 1) hint.erase(at, 1);
++    int hintScale = s;
++    while (hintScale > 1 && Canvas::TextWidth(hint, hintScale) > c.w - 8) --hintScale;
+     c.Text((c.w - Canvas::TextWidth(hint, hintScale)) / 2, c.h - 12 * s, hint, hintScale, th.hint);
+ }
+ 
+@@ -868,7 +1222,7 @@ inline void Draw(Canvas& c, const std::vector<Game>& games, int tab, int selecte
+ // options with what each does, set here before playing. They are written to the same settings
+ // file the games read (main.cpp, Settings: keys, values and defaults must stay in step with it),
+ // a line at a time, leaving the others as they are. Entries without a key are what can only be
+-// done in the pause menu. The list's font has capitals, digits and : - + . / < > ! ( ) only.
++// done in the pause menu. The list's font has capitals, digits and : - + . / < > ! ( ) ' , & ? _ only.
+ struct Setting
+ {
+     const char* key;  // nullptr: told about, not set here; "!...": something to do, not stored
+diff --git a/frontend/main.cpp b/frontend/main.cpp
+index d0b32c3..708806e 100644
+--- a/frontend/main.cpp
++++ b/frontend/main.cpp
+@@ -1919,15 +1919,19 @@ int main(int argc, char** argv)
+     auto nds = MakeConsole(rom, sav, opt.headless);
+     if (!nds) return 1;
+     // Cheats (cheats.h): from the cheats folder beside the saves, the ones that are on running
+-    // from the start. (Not in a lockstep test, which compares two runs of the game as it is.)
++    // from the start. Each ROM has its own, named after the ROM file as its save is (Heartfelt
++    // Gold.nds: Heartfelt Gold.txt), so that a game's hacks, which have its game code, do not share
++    // them. (Not in a lockstep test, which compares two runs of the game as it is.)
+     Cheats::List cheats;
+     const std::string gameCode = rom.size() >= 0x200 ? std::string((const char*)&rom[0x0C], 4) : std::string();
+     if (!opt.lockstep && rom.size() >= 0x200)
+     {
+-        cheats.Load(Cheats::FolderFor(opt.save), gameCode, rom.data());
++        cheats.Load(Cheats::FolderFor(opt.save), opt.rom, gameCode, rom.data());
+         cheats.Apply(nds->AREngine);
+-        fprintf(stderr, "[cheats] %zu for %s in %s, %d on, %zu folders\n", cheats.items.size(), gameCode.c_str(), cheats.folder.c_str(), cheats.On(), cheats.folders.size());
++        fprintf(stderr, "[cheats] %zu for %s (game code %s) in %s, %d on, %zu folders\n", cheats.items.size(), cheats.romName.c_str(),
++            gameCode.c_str(), cheats.folder.c_str(), cheats.On(), cheats.folders.size());
+         for (const std::string& src : cheats.sources) fprintf(stderr, "[cheats]   from %s\n", src.c_str());
++        for (const std::string& note : cheats.notes) fprintf(stderr, "[cheats]   %s\n", note.c_str());
+     }
+ #ifdef __SWITCH__
+     if (UseJit) fprintf(stderr, "[switch] fast memory: %s\n", UseFastMem ? "on" : "off");
+diff --git a/frontend/pc_launcher.cpp b/frontend/pc_launcher.cpp
+index bf0600f..8076ea6 100644
+--- a/frontend/pc_launcher.cpp
++++ b/frontend/pc_launcher.cpp
+@@ -501,6 +501,8 @@ std::vector<Launcher::Game> FindGames(const Folders& fo, std::map<std::string, s
+             fprintf(stderr, "[launcher] GBA games: %zu in %s\n", gbaSeen, fo.roms.c_str());
+     }
+ #endif
++    // The names the player gave games (RENAME: names.txt, beside the icons folder).
++    Launcher::ApplyNames(games, fo.art);
+     Launcher::AddComingSoon(games);
+     {
+         Launcher::Game& g = games.back();
+@@ -849,6 +851,86 @@ int PickGame(Folders& fo, std::vector<Launcher::Game>& games, int selected, bool
+         else if (row == 3) raClose();
+         if (raOpen) raBuild();
+     };
++    // RENAME (F2, a right click on a game, a controller's X, or a finger held on a game): the
++    // chosen game's name in the list, typed as RETROACHIEVEMENTS' LOG IN is (a phone shows its
++    // keyboard), kept in names.txt beside the icons folder (Launcher::StoreName). It starts from
++    // the name the game has, chosen: typing replaces it, BACKSPACE clears it, RIGHT (or a tap on
++    // it) keeps it to change. The game is followed by its ROM: the list is read again every few
++    // seconds. An empty name, or RESET NAME, gives it the game's own again.
++    bool nameOpen = false, nameFresh = false, nameSkipUp = false;
++    std::string nameRom, nameText, nameNote;
++    Menu nameMenu;
++    int holdGame = -1;      // the game a finger is held on (RENAME after a moment), or -1
++    Uint32 holdSince = 0;
++    auto nameBuild = [&]() {
++        nameMenu.items.clear();
++        std::string shown = Launcher::ListText(nameText);
++        if (shown.size() > 19) shown = ".." + shown.substr(shown.size() - 17);
++        nameMenu.items.push_back({ "NAME", nameFresh ? shown : shown + "_", true });
++        nameMenu.items.push_back({ "SAVE", "" });
++        nameMenu.items.push_back({ "RESET NAME", "" });
++        nameMenu.items.push_back({ "CANCEL", "" });
++    };
++    auto nameClose = [&]() {
++        nameOpen = nameMenu.open = false;
++        SDL_StopTextInput();
++    };
++    auto nameOpenFor = [&](int i) {
++        if (i < 0 || i >= (int)games.size() || games[i].comingSoon) return;
++        const Launcher::Game& g = games[i];
++        nameOpen = nameMenu.open = true;
++        nameFresh = true;
++        nameSkipUp = false;
++        nameRom = g.rom;
++        nameText = Launcher::DisplayName(g);
++        // (Under the box: the ROM, and the save that is its own.)
++        nameNote = "FILE: " + Launcher::ListText(Launcher::FileName(g.rom));
++        if (g.platform == Launcher::DS && g.known) nameNote += "    SAVE: " + Launcher::ListText(g.saveName);
++        nameMenu.selected = 0;
++        fprintf(stderr, "[launcher] rename %s\n", g.rom.c_str());
++        SDL_StartTextInput();
++        // (The key that opened it, if CONTROLS gave X a letter, is no letter of the name.)
++        SDL_FlushEvent(SDL_TEXTINPUT);
++        nameBuild();
++    };
++    // (own: RESET NAME.)
++    auto nameSave = [&](bool own) {
++        for (Launcher::Game& g : games)
++        {
++            if (g.rom != nameRom) continue;
++            const std::string name = own ? std::string() : Launcher::CleanName(nameText);
++            if (Launcher::StoreName(fo.art, g, name))
++            {
++                Launcher::SetCustomName(g, name);
++                fprintf(stderr, "[launcher] %s: %s\n", g.rom.c_str(), g.custom.empty() ? "its own name" : ("named " + g.custom).c_str());
++            }
++            else
++            {
++                note = "COULD NOT WRITE " + Launcher::ListText(Launcher::NamesFile(fo.art));
++                fprintf(stderr, "[launcher] could not write %s\n", Launcher::NamesFile(fo.art).c_str());
++            }
++            break;
++        }
++        lastScan = 0; // (the list again at once, in its order with the new name)
++        nameClose();
++    };
++    auto nameActivate = [&](int row) {
++        if (row <= 1) nameSave(false);
++        else if (row == 2) nameSave(true);
++        else nameClose();
++    };
++    auto nameType = [&](const char* text) {
++        if (nameFresh) nameText.clear();
++        nameFresh = false;
++        for (const char* p = text; *p; p++)
++            if ((unsigned char)*p >= 0x20 && *p != 0x7F) nameText += *p;
++        nameText = Launcher::Utf8Cut(nameText, Launcher::NameMax);
++        nameBuild();
++    };
++    // (The chosen game, when the list is what is shown and a game is chosen in it.)
++    auto renameChosen = [&]() {
++        if (!guide && !onSettings && !onTabs && selected >= 0 && selected < (int)games.size()) nameOpenFor(selected);
++    };
+     // The list's look (GAME LIST on the settings page: COLOUR, BACKGROUND), read again when one
+     // of them changes or the ROM folder (where a phone's picture is) does.
+     Launcher::Theme theme;
+@@ -1104,6 +1186,72 @@ int PickGame(Folders& fo, std::vector<Launcher::Game>& games, int selected, bool
+                 any = SDL_PollEvent(&e);
+                 continue;
+             }
++            // (RENAME takes the keyboard, the buttons and taps while it is up.)
++            if (nameOpen && e.type != SDL_QUIT)
++            {
++                auto moveRow = [&](int d) {
++                    nameMenu.selected = (nameMenu.selected + d + 4) % 4;
++                    nameBuild();
++                };
++                if (e.type == SDL_TEXTINPUT) nameType(e.text.text);
++                else if (e.type == SDL_KEYDOWN)
++                {
++                    const SDL_Scancode sc = e.key.keysym.scancode;
++                    if (sc == SDL_SCANCODE_ESCAPE || sc == SDL_SCANCODE_AC_BACK) nameClose();
++                    else if (sc == SDL_SCANCODE_BACKSPACE)
++                    {
++                        if (nameFresh) nameText.clear();
++                        else Launcher::Utf8PopBack(nameText);
++                        nameFresh = false;
++                        nameBuild();
++                    }
++                    else if (sc == SDL_SCANCODE_RIGHT || sc == SDL_SCANCODE_END)
++                    {
++                        nameFresh = false;
++                        nameBuild();
++                    }
++                    else if (sc == SDL_SCANCODE_RETURN || sc == SDL_SCANCODE_KP_ENTER) nameActivate(nameMenu.selected);
++                    else if (sc == SDL_SCANCODE_DOWN || sc == SDL_SCANCODE_TAB) moveRow(1);
++                    else if (sc == SDL_SCANCODE_UP) moveRow(-1);
++                }
++                else if (e.type == SDL_CONTROLLERBUTTONDOWN)
++                {
++                    const int b = e.cbutton.button;
++                    if (b == SDL_CONTROLLER_BUTTON_B || b == SDL_CONTROLLER_BUTTON_BACK) nameClose();
++                    else if (b == SDL_CONTROLLER_BUTTON_A || b == SDL_CONTROLLER_BUTTON_START) nameActivate(nameMenu.selected);
++                    else if (b == SDL_CONTROLLER_BUTTON_DPAD_DOWN) moveRow(1);
++                    else if (b == SDL_CONTROLLER_BUTTON_DPAD_UP) moveRow(-1);
++                }
++                else if (e.type == SDL_MOUSEBUTTONUP && e.button.button == SDL_BUTTON_LEFT)
++                {
++                    // (Not the finger that was held on the game to open it, as it lifts.)
++                    if (nameSkipUp) nameSkipUp = false;
++                    else
++                    {
++                        int ww = 1, wh = 1;
++                        SDL_GetWindowSize(window, &ww, &wh);
++                        const int row = nameMenu.ItemAt(e.button.x * canvas.w / std::max(1, ww), e.button.y * canvas.h / std::max(1, wh));
++                        if (row == 0)
++                        {
++                            // A tap on the name: changed rather than replaced, with a phone's keyboard again.
++                            nameMenu.selected = 0;
++                            nameFresh = false;
++                            SDL_StartTextInput();
++                            nameBuild();
++                        }
++                        else if (row > 0)
++                        {
++                            nameMenu.selected = row;
++                            nameActivate(row);
++                        }
++                    }
++                }
++                else if (e.type == SDL_CONTROLLERDEVICEADDED || e.type == SDL_CONTROLLERDEVICEREMOVED || e.type == SDL_JOYDEVICEADDED ||
++                         e.type == SDL_JOYDEVICEREMOVED || e.type == SDL_WINDOWEVENT)
++                    goto normal;
++                any = SDL_PollEvent(&e);
++                continue;
++            }
+ #ifdef SSR_UPDATER
+             if (updateMenu.open && e.type != SDL_QUIT)
+             {
+@@ -1252,12 +1400,14 @@ int PickGame(Folders& fo, std::vector<Launcher::Game>& games, int selected, bool
+                     else if (act == Controls::A || act == Controls::START) { if (!e.key.repeat) choose(); }
+                     else if (act == Controls::B || act == Controls::MENU) { if (guide) { if (!page.Back()) guide = false; } else quit = true; }
+                     else if (act == Controls::Y) toggleGuide();
++                    else if (act == Controls::X) renameChosen();
+                     else if (act >= Controls::UP && act <= Controls::RIGHT)
+                         move(act == Controls::LEFT ? 1 : act == Controls::RIGHT ? 2 : act == Controls::UP ? 3 : 4);
+                     break;
+                 }
+                 switch (e.key.keysym.sym)
+                 {
++                case SDLK_F2: renameChosen(); break;
+                 case SDLK_LEFT: case SDLK_a: move(1); break;
+                 case SDLK_RIGHT: case SDLK_d: move(2); break;
+                 case SDLK_UP: case SDLK_w: move(3); break;
+@@ -1304,11 +1454,12 @@ int PickGame(Folders& fo, std::vector<Launcher::Game>& games, int selected, bool
+                 else in = e.cbutton.button;
+                 if (in < 0) break;
+                 // The buttons changed in CONTROLS do their actions; otherwise A (or START) plays, B
+-                // (or BACK) goes back and Y opens the settings.
++                // (or BACK) goes back, Y opens the settings and X renames the chosen game.
+                 const int act = ctl.PadCustom() ? ctl.ActionOfPad(in, ctl.byLabel)
+                               : in == Controls::IN_A || in == Controls::IN_START ? Controls::A
+                               : in == Controls::IN_B || in == Controls::IN_BACK ? Controls::B
+                               : in == Controls::IN_Y ? Controls::Y
++                              : in == Controls::IN_X ? Controls::X
+                               : in == Controls::IN_LB ? Controls::L : in == Controls::IN_RB ? Controls::R : -1;
+                 if (act == Controls::L || act == Controls::R)
+                 {
+@@ -1319,6 +1470,7 @@ int PickGame(Folders& fo, std::vector<Launcher::Game>& games, int selected, bool
+                 else if (act == Controls::A || act == Controls::START) choose();
+                 else if (act == Controls::B || act == Controls::SELECT) { if (guide) { if (!page.Back()) guide = false; } else quit = true; }
+                 else if (act == Controls::Y) toggleGuide();
++                else if (act == Controls::X) renameChosen();
+                 break;
+             }
+             case SDL_MOUSEMOTION:
+@@ -1331,6 +1483,7 @@ int PickGame(Folders& fo, std::vector<Launcher::Game>& games, int selected, bool
+                 const int mx = (e.type == SDL_MOUSEMOTION ? e.motion.x : e.button.x) * canvas.w / std::max(1, ww);
+                 const int my = (e.type == SDL_MOUSEMOTION ? e.motion.y : e.button.y) * canvas.h / std::max(1, wh);
+                 const int s = std::max(1, std::min(canvas.w, canvas.h) / 240);
++                if (e.type == SDL_MOUSEBUTTONUP) holdGame = -1; // (the finger lifted before RENAME)
+                 // The buttons in the title band (touch screens): SETTINGS at the right, and in the
+                 // settings BACK at the left; on Android FOLDER at the left of the list.
+                 if (e.type == SDL_MOUSEBUTTONUP && my < (canvas.h > canvas.w ? 43 : 22) * s && !dragging)
+@@ -1408,6 +1561,7 @@ int PickGame(Folders& fo, std::vector<Launcher::Game>& games, int selected, bool
+                     {
+                         follow = false;
+                         tapPlay = -1;
++                        holdGame = -1;
+                         scroll = std::max(0, downScroll - (my - downY));
+                         break;
+                     }
+@@ -1421,6 +1575,15 @@ int PickGame(Folders& fo, std::vector<Launcher::Game>& games, int selected, bool
+                 if (e.type == SDL_MOUSEMOTION && !pressed && e.motion.which != SDL_TOUCH_MOUSEID && i >= 0)
+                 { selected = i; follow = false; onSettings = onTabs = false; }
+ 
++                // A right click on a game: RENAME.
++                if (e.type == SDL_MOUSEBUTTONDOWN && e.button.button == SDL_BUTTON_RIGHT && i >= 0)
++                {
++                    selected = i;
++                    onSettings = onTabs = false;
++                    note.clear();
++                    nameOpenFor(i);
++                    break;
++                }
+                 if (e.type == SDL_MOUSEBUTTONUP)
+                 {
+                     // A tap on the chosen game plays it when the finger lifts (not as it lands:
+@@ -1433,6 +1596,12 @@ int PickGame(Folders& fo, std::vector<Launcher::Game>& games, int selected, bool
+                 }
+                 // A tap on another game chooses that one; a double click plays.
+                 const bool touch = e.type == SDL_MOUSEBUTTONDOWN && e.button.which == SDL_TOUCH_MOUSEID;
++                // (A finger held on a game, still, for a moment: RENAME, below.)
++                if (touch && i >= 0)
++                {
++                    holdGame = i;
++                    holdSince = SDL_GetTicks();
++                }
+                 if (touch && i >= 0 && i == selected)
+                 {
+                     tapPlay = i;
+@@ -1503,6 +1672,20 @@ int PickGame(Folders& fo, std::vector<Launcher::Game>& games, int selected, bool
+             }
+         }
+ #endif
++        // A finger held still on a game for a moment: RENAME (a phone has no F2 or right click).
++        if (holdGame >= 0 && pressed && !dragging && !guide && !nameOpen && SDL_GetTicks() - holdSince > 600)
++        {
++            if (holdGame < (int)games.size())
++            {
++                selected = holdGame;
++                onSettings = onTabs = false;
++                note.clear();
++                nameOpenFor(holdGame);
++                nameSkipUp = true; // (the finger is still down: its lifting is no tap in the box)
++            }
++            holdGame = tapPlay = -1;
++            pressed = false;
++        }
+         // Held directions on any controller (the D-pad or the left stick) repeat.
+         int dir = 0;
+         for (SDL_GameController* p : pads)
+@@ -1565,10 +1748,14 @@ int PickGame(Folders& fo, std::vector<Launcher::Game>& games, int selected, bool
+         {
+             lastScan = SDL_GetTicks();
+             const std::string current = selected < 0 || selected >= (int)games.size() ? std::string() : games[selected].rom;
++            const std::string held = holdGame < 0 || holdGame >= (int)games.size() ? std::string() : games[holdGame].rom;
+             games = FindGames(fo, artCache);
+-            selected = -1;
++            selected = holdGame = -1;
+             for (size_t i = 0; i < games.size(); i++)
++            {
+                 if (games[i].rom == current) selected = (int)i;
++                if (games[i].rom == held) holdGame = (int)i;
++            }
+             if (selected < 0 || view().SpotOf(selected) < 0) selected = Launcher::FirstIn(view());
+         }
+ 
+@@ -1611,27 +1798,28 @@ int PickGame(Folders& fo, std::vector<Launcher::Game>& games, int selected, bool
+         // CONTROLS has them, while one is connected.
+         const bool padIn = !pads.empty() || !joys.empty();
+         auto btn = [&](int a) {
+-            const int def = a == Controls::A ? Controls::IN_A : a == Controls::B ? Controls::IN_B
++            const int def = a == Controls::A ? Controls::IN_A : a == Controls::B ? Controls::IN_B : a == Controls::X ? Controls::IN_X
+                           : a == Controls::L ? Controls::IN_LB : a == Controls::R ? Controls::IN_RB : Controls::IN_Y;
+             return std::string(Controls::InputName(ctl.PadCustom() ? ctl.Pad(a, ctl.byLabel) : def,
+                 Controls::StyleOf(pads.empty() ? nullptr : pads[0])));
+         };
+ #ifdef SSR_IOS
+         const std::string hint = games.empty() ? std::string("FOLDER: YOUR ROMS FOLDER IN THE FILES APP")
+-                               : padIn ? "TAP A GAME TWICE OR PRESS " + btn(Controls::A) + " TO PLAY    " + btn(Controls::Y) + ": SETTINGS"
+-                                       : std::string("TAP A GAME TWICE TO PLAY    SETTINGS: AT THE TOP");
++                               : padIn ? "TAP A GAME TWICE OR PRESS " + btn(Controls::A) + " TO PLAY    " + btn(Controls::X) + ": RENAME    " + btn(Controls::Y) + ": SETTINGS"
++                                       : std::string("TAP A GAME TWICE TO PLAY    HOLD IT TO RENAME    SETTINGS: AT THE TOP");
+         const std::string pageHint = padIn ? "UP / DOWN: CHOOSE    " + btn(Controls::A) + ": CHANGE    " + btn(Controls::B) + ": BACK"
+                                            : std::string("TAP AN OPTION THEN TAP AGAIN TO CHANGE    DRAG TO SCROLL");
+ #elif defined(__ANDROID__)
+         const std::string hint = games.empty() ? "TAP OR PRESS " + (padIn ? btn(Controls::A) : std::string("A")) + " TO CHOOSE YOUR ROMS FOLDER    BACK: QUIT"
+-                               : padIn ? "TAP A GAME TWICE OR PRESS " + btn(Controls::A) + " TO PLAY    " + btn(Controls::L) + " / " + btn(Controls::R) + ": TABS    BACK: QUIT"
+-                                       : std::string("TAP A GAME TWICE TO PLAY    SETTINGS: AT THE TOP    BACK: QUIT");
++                               : padIn ? "TAP A GAME TWICE OR PRESS " + btn(Controls::A) + " TO PLAY    " + btn(Controls::X) + ": RENAME    " + btn(Controls::L) + " / " + btn(Controls::R) + ": TABS    BACK: QUIT"
++                                       : std::string("TAP A GAME TWICE TO PLAY    HOLD IT TO RENAME    SETTINGS: AT THE TOP    BACK: QUIT");
+         const std::string pageHint = padIn ? "UP / DOWN: CHOOSE    " + btn(Controls::A) + ": CHANGE    " + btn(Controls::B) + ": BACK"
+                                            : std::string("TAP AN OPTION THEN TAP AGAIN TO CHANGE    DRAG TO SCROLL    BACK: DONE");
+ #else
+         const std::string hint = games.empty() ? std::string("O: OPEN THE ROMS FOLDER    H: SETTINGS    ESC: QUIT")
+-                               : padIn ? btn(Controls::A) + ": PLAY    " + btn(Controls::L) + " / " + btn(Controls::R) + ": TABS    " + btn(Controls::Y) + ": SETTINGS    " + btn(Controls::B) + ": QUIT"
+-                                       : std::string("ENTER: PLAY    Q / E: TABS    H: SETTINGS    O: ROMS    ESC: QUIT");
++                               : padIn ? btn(Controls::A) + ": PLAY    " + btn(Controls::L) + " / " + btn(Controls::R) + ": TABS    " + btn(Controls::Y) + ": SETTINGS    " +
++                                             btn(Controls::X) + ": RENAME    " + btn(Controls::B) + ": QUIT"
++                                       : std::string("ENTER: PLAY    Q / E: TABS    H: SETTINGS    F2: RENAME    O: ROMS    ESC: QUIT");
+         const std::string pageHint = page.group < 0 ? (padIn ? "UP / DOWN: CHOOSE    " + btn(Controls::A) + ": OPEN    " + btn(Controls::B) + ": BACK"
+                                                              : std::string("UP / DOWN: CHOOSE    ENTER: OPEN    ESC: BACK"))
+                                    : padIn ? "UP / DOWN: CHOOSE    LEFT / RIGHT / " + btn(Controls::A) + ": CHANGE    " + btn(Controls::B) + ": BACK"
+@@ -1724,6 +1912,20 @@ int PickGame(Folders& fo, std::vector<Launcher::Game>& games, int selected, bool
+                 y += 12 * s;
+             }
+         }
++        if (nameOpen && !guide)
++        {
++            // (Hints short enough for the box: 29 characters.)
++            const bool onName = nameMenu.selected == 0;
++#ifdef SSR_PHONE
++            const std::string nh = padIn && !onName ? btn(Controls::A) + ": CHOOSE    " + btn(Controls::B) + ": CANCEL"
++                                 : nameFresh ? std::string("TYPE TO REPLACE   TAP: EDIT") : std::string("TYPE THE NAME, THEN SAVE");
++#else
++            const std::string nh = onName && nameFresh ? std::string("TYPE TO REPLACE   RIGHT: EDIT")
++                                 : padIn ? btn(Controls::A) + (onName ? ": SAVE    " : ": CHOOSE    ") + btn(Controls::B) + ": CANCEL"
++                                         : std::string(onName ? "ENTER: SAVE    ESC: CANCEL" : "ENTER: CHOOSE    ESC: CANCEL");
++#endif
++            nameMenu.Draw(canvas, "RENAME", nh, nameNote);
++        }
+         SDL_SetRenderDrawColor(renderer, 16, 16, 16, 255);
+         if (!texture || SDL_UpdateTexture(texture, nullptr, canvas.px.data(), canvas.w * 4) != 0 ||
+             SDL_RenderClear(renderer) != 0 || SDL_RenderCopy(renderer, texture, nullptr, nullptr) != 0)
+@@ -1759,8 +1961,8 @@ int PickGame(Folders& fo, std::vector<Launcher::Game>& games, int selected, bool
+ #endif
+         if (testPick && *testPick)
+         {
+-            for (size_t i = 0; i < games.size(); i++)
+-                if (games[i].code == testPick) result = (int)i;
++            // (A game code, or a ROM's file name, as --game takes them.)
++            result = Launcher::FindGame(games, testPick, [](const Launcher::Game&) { return true; });
+             fprintf(stderr, "[launcher] test: %s chosen\n", testPick);
+             break;
+         }
+@@ -1793,8 +1995,10 @@ int PickGame(Folders& fo, std::vector<Launcher::Game>& games, int selected, bool
+ 
+ bool Start(int& argc, char**& argv)
+ {
+-    // "--game IREO" (the desktop shortcuts, shortcuts.h): that game at once, without the list.
+-    // Other arguments (a ROM given by hand, the test harness): the program runs as it always has.
++    // "--game IREO" (the desktop shortcuts, shortcuts.h): that game at once, without the list; or
++    // "--game "Heartfelt Gold.nds"", a ROM by its file name, for a game with more than one ROM
++    // (Launcher::GameArg). Other arguments (a ROM given by hand, the test harness): the program
++    // runs as it always has.
+     std::string direct;
+     // "--rom <file>": that ROM at once, without the list (a GBA one is imported into roms first).
+     std::string directRom;
+@@ -1924,13 +2128,7 @@ bool Start(int& argc, char**& argv)
+     }
+     int winW = 1280, winH = 720;
+     bool fullscreen = ConfigFullscreen(fo.cfg, winW, winH);
+-    int directGame = -1;
+-    for (size_t i = 0; i < games.size() && !direct.empty(); i++)
+-        if (games[i].code == direct && Playable(fo, games[i]))
+-        {
+-            directGame = (int)i;
+-            break;
+-        }
++    int directGame = direct.empty() ? -1 : Launcher::FindGame(games, direct, [&](const Launcher::Game& g) { return Playable(fo, g); });
+     if (!direct.empty() && directGame < 0) fprintf(stderr, "[launcher] --game %s: not in the list\n", direct.c_str());
+     if (!directRom.empty())
+     {
+@@ -2010,12 +2208,14 @@ bool Start(int& argc, char**& argv)
+     }
+     g_canChange = true;
+     const Launcher::Game& game = games[chosen];
+-    if (const Launcher::KnownGame* k = Launcher::Known(game.code)) g_name = k->name;
++    g_name = Launcher::DisplayName(game); // (the player's own name for it, if it has one)
+     if (FILE* f = fopen(lastPath.c_str(), "w"))
+     {
+         fprintf(f, "%s\n", game.rom.c_str());
+         fclose(f);
+     }
++    // The save the game's ROMs shared before each had its own, handed on the first time.
++    Launcher::CarryOverSave(games, game);
+     fprintf(stderr, "[launcher] %s (game code %s), save %s/%s\n", game.rom.c_str(), game.code.c_str(), fo.saves.c_str(),
+         game.saveName.c_str());
+     g_args = { argc > 0 && argv[0] ? argv[0] : "pokemon-ds-wide", game.rom, "--save", fo.saves + "/" + game.saveName,
+diff --git a/frontend/shortcuts.h b/frontend/shortcuts.h
+index 5eaa605..4ab9491 100644
+--- a/frontend/shortcuts.h
++++ b/frontend/shortcuts.h
+@@ -131,12 +131,29 @@ inline bool WriteFile(const std::string& path, const std::vector<uint8_t>& data)
+     return fclose(f) == 0 && ok;
+ }
+ 
+-// The shortcut's name: the game's ("Pokemon Black 2"), as a file name.
++// The shortcut's name: the game's ("Pokemon Black 2"), or the player's own for it (RENAME), as a
++// file name (without the \ / : * ? " < > | Windows will not have in one).
+ inline std::string Title(const Launcher::Game& g)
+ {
+-    if (const Launcher::KnownGame* k = Launcher::Known(g.code)) return k->name;
+-    if (g.platform != Launcher::DS && !g.name.empty()) return Launcher::TitleCase(g.name); // (a GBA game)
+-    return "Pokemon DS " + g.code;
++    std::string t;
++    for (char c : Launcher::DisplayName(g))
++        t += (unsigned char)c < 0x20 || strchr("\\/:*?\"<>|", c) ? ' ' : c;
++    while (!t.empty() && (t.back() == ' ' || t.back() == '.')) t.pop_back();
++    while (!t.empty() && t[0] == ' ') t.erase(0, 1);
++    return t.empty() ? "Pokemon DS " + g.code : t;
++}
++
++// What "--game" starts the game by (Launcher::GameArg: its code, or its ROM's file name when the
++// list has more than one ROM of the game), and a short name for its icon and launcher files from
++// that: the code (IREO), or the code and a number made from the file name (IPKE-1A2B3C4D).
++inline std::string FileKey(const std::string& code, const std::string& arg)
++{
++    if (arg == code) return code;
++    uint32_t h = 2166136261u; // (FNV-1a, of the name in capitals as --game takes it)
++    for (char c : Launcher::Upper(arg)) h = (h ^ (uint8_t)c) * 16777619u;
++    char buf[16];
++    snprintf(buf, sizeof buf, "-%08X", (unsigned)h);
++    return code + buf;
+ }
+ 
+ #ifdef _WIN32
+@@ -187,9 +204,13 @@ inline std::vector<uint8_t> Ico(const Launcher::Game& g)
+ // game started from its desktop shortcut. Windows groups the windows on the taskbar, and shows
+ // their icon, by these: without them every window of the program counted as any shortcut to it
+ // that was pinned (Platinum's, say), and showed that game's picture.
+-inline std::wstring AppId(const std::string& code)
++// game: what --game names it by (FileKey): a game code as it always was; a ROM's file name as a
++// number made from it (ROM1A2B3C4D), an ID having no spaces or dots.
++inline std::wstring AppId(const std::string& game)
+ {
+-    return code.empty() ? L"mamesj.PokemonDSWide" : L"mamesj.PokemonDSWide." + std::wstring(code.begin(), code.end());
++    std::string id = Launcher::Upper(game);
++    if (id.find_first_not_of("ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-") != std::string::npos) id = "ROM" + FileKey("", game).substr(1);
++    return id.empty() ? L"mamesj.PokemonDSWide" : L"mamesj.PokemonDSWide." + std::wstring(id.begin(), id.end());
+ }
+ 
+ // This process's taskbar name: before any window is made.
+@@ -237,9 +258,15 @@ inline std::vector<uint8_t> Icns(const Launcher::Game& g)
+ }
+ #endif
+ 
+-// Makes the shortcuts: one per game (once each, the first of any in several folders). dir is
+-// the program's folder (for the icons). Returns how many were made; where says where they went,
+-// or what failed.
++// Whether a shortcut is made for the game: one per game and name, so the same game in several
++// folders gets one (for the first), and each hack of a game the player renamed its own.
++inline bool Wanted(const Launcher::Game& g, std::set<std::string>& done)
++{
++    return g.known && !g.comingSoon && done.insert(g.code + "|" + Launcher::Upper(Title(g))).second;
++}
++
++// Makes the shortcuts (Wanted). dir is the program's folder (for the icons). Returns how many were
++// made; where says where they went, or what failed.
+ inline int Make(const std::string& dir, const std::vector<Launcher::Game>& games, std::string& where)
+ {
+     std::set<std::string> done;
+@@ -265,15 +292,17 @@ inline int Make(const std::string& dir, const std::vector<Launcher::Game>& games
+     const HRESULT init = CoInitializeEx(nullptr, COINIT_APARTMENTTHREADED);
+     for (const Launcher::Game& g : games)
+     {
+-        if (!g.known || !done.insert(g.code).second) continue;
++        if (!Wanted(g, done)) continue;
++        const std::string arg = Launcher::GameArg(games, g);
+         IShellLinkW* link = nullptr;
+         if (FAILED(CoCreateInstance(CLSID_ShellLink, nullptr, CLSCTX_INPROC_SERVER, IID_IShellLinkW, (void**)&link))) break;
+         link->SetPath(exe);
+-        link->SetArguments((L"--game " + Wide(g.code)).c_str());
++        // (A ROM's file name in quotes: it may have spaces. Windows file names have no quotes.)
++        link->SetArguments((L"--game " + (arg == g.code ? Wide(arg) : L"\"" + Wide(arg) + L"\"")).c_str());
+         link->SetWorkingDirectory(Wide(dir).c_str());
+         link->SetDescription(Wide(Title(g) + " (Pokémon Fulldex)").c_str());
+         const std::vector<uint8_t> ico = Ico(g);
+-        const std::string icoPath = iconDir + "/" + g.code + ".ico";
++        const std::string icoPath = iconDir + "/" + FileKey(g.code, arg) + ".ico";
+         if (!ico.empty() && WriteFile(icoPath, ico)) link->SetIconLocation(Wide(icoPath).c_str(), 0);
+         // (The game's own taskbar name, as the program takes when started with --game: SetAppId.)
+         IPropertyStore* props = nullptr;
+@@ -281,7 +310,7 @@ inline int Make(const std::string& dir, const std::vector<Launcher::Game>& games
+         {
+             // PKEY_AppUserModel_ID
+             static const PROPERTYKEY key = { { 0x9F4C2855, 0x9F79, 0x4B39, { 0xA8, 0xD0, 0xE1, 0xD4, 0x2D, 0xE1, 0xD5, 0xF3 } }, 5 };
+-            const std::wstring id = AppId(g.code);
++            const std::wstring id = AppId(arg);
+             PROPVARIANT v;
+             PropVariantInit(&v);
+             v.vt = VT_LPWSTR;
+@@ -301,7 +330,7 @@ inline int Make(const std::string& dir, const std::vector<Launcher::Game>& games
+             file->Release();
+         }
+         link->Release();
+-        fprintf(stderr, "[launcher] desktop shortcut for %s\n", g.code.c_str());
++        fprintf(stderr, "[launcher] desktop shortcut for %s (%s)\n", arg.c_str(), Title(g).c_str());
+     }
+     if (SUCCEEDED(init)) CoUninitialize();
+     // Explorer redraws the desktop with the new icons.
+@@ -324,18 +353,23 @@ inline int Make(const std::string& dir, const std::vector<Launcher::Game>& games
+     const std::string desk = home + "/Desktop";
+     struct stat st;
+     const bool hasDesk = stat(desk.c_str(), &st) == 0 && S_ISDIR(st.st_mode);
+-    // (The program's path in single quotes for the script, each quote in it as '\''.)
+-    std::string quoted = "'";
+-    for (char c : std::string(exe)) quoted += c == '\'' ? std::string("'\\''") : std::string(1, c);
+-    quoted += "'";
++    // (The program's path, and a ROM's file name, in single quotes for the script, each quote in
++    // it as '\''.)
++    auto shQuoted = [](const std::string& text) {
++        std::string q = "'";
++        for (char c : text) q += c == '\'' ? std::string("'\\''") : std::string(1, c);
++        return q + "'";
++    };
++    const std::string quoted = shQuoted(exe);
+     for (const Launcher::Game& g : games)
+     {
+-        if (!g.known || !done.insert(g.code).second) continue;
+-        std::string lower = g.code;
++        if (!Wanted(g, done)) continue;
++        const std::string arg = Launcher::GameArg(games, g), key = FileKey(g.code, arg);
++        std::string lower = key;
+         for (char& c : lower) c = (char)tolower((unsigned char)c);
+         // The app is a shell script that starts the program on the game; the program, inside
+         // its own .app, still uses the current Fulldex data folders.
+-        const std::string script = "#!/bin/sh\nexec " + quoted + " --game " + g.code + "\n";
++        const std::string script = "#!/bin/sh\nexec " + quoted + " --game " + (arg == g.code ? arg : shQuoted(arg)) + "\n";
+         const std::string plist =
+             "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+             "<!DOCTYPE plist PUBLIC \"-//Apple//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">\n"
+@@ -362,7 +396,7 @@ inline int Make(const std::string& dir, const std::vector<Launcher::Game>& games
+             if (!icns.empty()) WriteFile(app + "/Contents/Resources/icon.icns", icns);
+         }
+         if (ok) made++;
+-        fprintf(stderr, "[launcher] shortcut for %s\n", g.code.c_str());
++        fprintf(stderr, "[launcher] shortcut for %s (%s)\n", arg.c_str(), Title(g).c_str());
+     }
+     where = hasDesk ? "ON YOUR DESKTOP AND IN YOUR APPS" : "IN YOUR APPS";
+ #else
+@@ -405,29 +439,35 @@ inline int Make(const std::string& dir, const std::vector<Launcher::Game>& games
+     }
+     struct stat st;
+     const bool hasDesk = stat(desk.c_str(), &st) == 0 && S_ISDIR(st.st_mode);
+-    // (A path in Exec is quoted, with its backslashes, quotes, backticks and dollars escaped.)
+-    std::string quoted = "\"";
+-    for (char c : std::string(exe))
+-    {
+-        // (The file's own escaping doubles the backslash the Exec rules want before these.)
+-        if (c == '\\') quoted += "\\\\\\\\";
+-        else
++    // (A path in Exec is quoted, with its backslashes, quotes, backticks and dollars escaped, and
++    // a % doubled, as Exec's own codes start with one.)
++    auto execQuoted = [](const std::string& s) {
++        std::string q = "\"";
++        for (char c : s)
+         {
+-            if (c == '"' || c == '`' || c == '$') quoted += "\\\\";
+-            quoted += c;
++            // (The file's own escaping doubles the backslash the Exec rules want before these.)
++            if (c == '\\') q += "\\\\\\\\";
++            else if (c == '%') q += "%%";
++            else
++            {
++                if (c == '"' || c == '`' || c == '$') q += "\\\\";
++                q += c;
++            }
+         }
+-    }
+-    quoted += "\"";
++        return q + "\"";
++    };
++    const std::string quoted = execQuoted(exe);
+     for (const Launcher::Game& g : games)
+     {
+-        if (!g.known || !done.insert(g.code).second) continue;
+-        const std::string png = iconDir + "/" + g.code + ".png";
++        if (!Wanted(g, done)) continue;
++        const std::string arg = Launcher::GameArg(games, g), key = FileKey(g.code, arg);
++        const std::string png = iconDir + "/" + key + ".png";
+         const std::vector<uint32_t> px = Picture(g, 256);
+         const bool icon = !px.empty() && WriteFile(png, Png(px, 256, 256));
+-        std::string lower = g.code;
++        std::string lower = key;
+         for (char& c : lower) c = (char)tolower((unsigned char)c);
+         const std::string entry = "[Desktop Entry]\nType=Application\nName=" + Title(g) +
+-            "\nComment=Pokémon Fulldex\nExec=" + quoted + " --game " + g.code +
++            "\nComment=Pokémon Fulldex\nExec=" + quoted + " --game " + (arg == g.code ? arg : execQuoted(arg)) +
+             "\nPath=" + dir + "\n" + (icon ? "Icon=" + png + "\n" : "") + "Terminal=false\nCategories=Game;\n";
+         const std::string file = "pokemon-ds-wide-" + lower + ".desktop";
+         bool ok = WriteFile(apps + "/" + file, std::vector<uint8_t>(entry.begin(), entry.end()));
+@@ -438,7 +478,7 @@ inline int Make(const std::string& dir, const std::vector<Launcher::Game>& games
+             chmod(d.c_str(), 0755); // (desktops start only launchers marked as programs)
+         }
+         if (ok) made++;
+-        fprintf(stderr, "[launcher] shortcut for %s\n", g.code.c_str());
++        fprintf(stderr, "[launcher] shortcut for %s (%s)\n", arg.c_str(), Title(g).c_str());
+     }
+     where = hasDesk ? "ON YOUR DESKTOP AND IN YOUR APPS" : "IN YOUR APPS MENU";
+ #endif
+diff --git a/frontend/switch_platform.cpp b/frontend/switch_platform.cpp
+index 86bc3fd..e3af27e 100644
+--- a/frontend/switch_platform.cpp
++++ b/frontend/switch_platform.cpp
+@@ -130,8 +130,10 @@ std::vector<uint8_t> IconJpeg(const Launcher::Game& g)
+     return jpeg;
+ }
+ 
+-// HOME MENU ICONS (the settings page): one HOME Menu entry per game in the list, each starting
+-// this program with "--game CODE" (switch_forwarder.cpp). What came of it, for the page.
++// HOME MENU ICONS (the settings page): one HOME Menu entry per game in the list (and per name: the
++// same game in two folders once, each hack the player renamed its own), each starting this program
++// with "--game CODE", or "--game "<ROM's file name>"" for a game with more than one ROM
++// (Launcher::GameArg; switch_forwarder.cpp). What came of it, for the page.
+ std::string InstallHomeIcons(const std::vector<Launcher::Game>& games)
+ {
+     if (g_self.empty()) return "FAILED: NO PROGRAM PATH";
+@@ -139,18 +141,21 @@ std::string InstallHomeIcons(const std::vector<Launcher::Game>& games)
+     std::vector<std::string> done;
+     for (const Launcher::Game& g : games)
+     {
+-        if (!Playable(g) || std::find(done.begin(), done.end(), g.code) != done.end()) continue;
+-        done.push_back(g.code);
++        const std::string name = Launcher::DisplayName(g), key = g.code + "|" + Launcher::Upper(name);
++        if (g.comingSoon || !Playable(g) || std::find(done.begin(), done.end(), key) != done.end()) continue;
++        done.push_back(key);
+         SwitchForwarder::Entry e;
+-        const Launcher::KnownGame* k = Launcher::Known(g.code);
+-        e.name = k ? k->name : Launcher::TitleCase(g.name);
+-        e.args = "--game " + g.code;
+-        // The icon: the player's own picture in icons/ if there is one, else the box art built
+-        // into the program, else the list's picture (a one-game program's icon can be a placeholder).
++        e.name = name;
++        // (A file name in quotes, which the program's arguments are read with: libnx's argv.)
++        const std::string arg = Launcher::GameArg(games, g);
++        e.args = "--game " + (arg == g.code ? arg : "\"" + arg + "\"");
++        // The icon: the player's own picture (in icons/ or beside the ROM) if there is one, else
++        // the box art built into the program, else the list's picture (a one-game program's icon
++        // can be a placeholder).
+         Launcher::Game pic = g;
+         const std::string dir = g_self.substr(0, g_self.find_last_of('/'));
+         struct stat is;
+-        const bool own = stat((dir + "/icons/" + g.code + ".jpg").c_str(), &is) == 0 || stat((dir + "/icons/" + g.code + ".png").c_str(), &is) == 0;
++        const bool own = g.artOwn || stat((dir + "/icons/" + g.code + ".jpg").c_str(), &is) == 0 || stat((dir + "/icons/" + g.code + ".png").c_str(), &is) == 0;
+ #ifdef SSR_PC_ART
+         size_t size = 0;
+         std::vector<uint32_t> art;
+@@ -193,12 +198,40 @@ std::string InstallHomeIcons(const std::vector<Launcher::Game>& games)
+ }
+ #endif
+ 
++// RENAME (X in the game list): the console's own keyboard (a library applet) for the game's name
++// in the list, starting from the name it has, the ROM's file name (and its save) under it. False
++// when it was closed without OK; an empty name gives the game its own again.
++bool AskName(const Launcher::Game& g, std::string& name)
++{
++    SwkbdConfig kbd;
++    if (R_FAILED(swkbdCreate(&kbd, 0))) return false;
++    swkbdConfigMakePresetDefault(&kbd);
++    // (Shown on a line, with the header and sub text: at most 32 characters for that.)
++    swkbdConfigSetTextDrawType(&kbd, SwkbdTextDrawType_Line);
++    swkbdConfigSetStringLenMax(&kbd, Launcher::NameMax);
++    swkbdConfigSetHeaderText(&kbd, "Name in the game list");
++    const std::string sub = Launcher::FileName(g.rom) + (g.platform == Launcher::DS && g.known ? "   (save: " + g.saveName + ")" : "");
++    swkbdConfigSetSubText(&kbd, sub.c_str());
++    swkbdConfigSetGuideText(&kbd, "Leave empty to reset the name");
++    swkbdConfigSetOkButtonText(&kbd, "Rename");
++    const std::string start = Launcher::Utf8Cut(Launcher::DisplayName(g), Launcher::NameMax);
++    swkbdConfigSetInitialText(&kbd, start.c_str());
++    char out[256] = {};
++    const Result rc = swkbdShow(&kbd, out, sizeof out);
++    swkbdClose(&kbd);
++    fprintf(stderr, "[switch] rename %s: %s\n", g.rom.c_str(), R_SUCCEEDED(rc) ? out : "cancelled");
++    if (R_FAILED(rc)) return false;
++    name = out;
++    return true;
++}
++
+ // The game list (launcher.h) on the screen until a game is chosen: its index, or -1 for +.
+ // Shown with libnx's framebuffer, before the game's own window exists.
+ // autoFrames > 0: the list is shown that many frames and the selected game played (test runs:
+ // "arg --show-list" in test.txt, to time a game started after the list).
+-// cfgPath: the settings file, for the settings page (Y).
+-int PickGame(const std::vector<Launcher::Game>& games, int selected, const std::string& cfgPath, int autoFrames = 0)
++// cfgPath: the settings file, for the settings page (Y). games: as RENAME leaves them (their new
++// names, in the list's order), which the index returned is of.
++int PickGame(std::vector<Launcher::Game>& games, int selected, const std::string& cfgPath, int autoFrames = 0)
+ {
+     Framebuffer fb;
+     if (R_FAILED(framebufferCreate(&fb, nwindowGetDefault(), 1280, 720, PIXEL_FORMAT_RGBA_8888, 2))) return selected;
+@@ -211,7 +244,7 @@ int PickGame(const std::vector<Launcher::Game>& games, int selected, const std::
+     // The touch screen (handheld): SETTINGS at the right of the title band, BACK at its left in
+     // the settings, as on a PC or a phone (pc_launcher.cpp). A tap counts as the finger lifts.
+     hidInitializeTouchScreen();
+-    bool touching = false;
++    bool touching = false, touchBlocked = false;
+     int touchX = 0, touchY = 0;
+     // SETTINGS or the tabs chosen with the D-pad: up from the first row of games the tabs (left
+     // and right change the tab), up again SETTINGS.
+@@ -355,7 +388,10 @@ int PickGame(const std::vector<Launcher::Game>& games, int selected, const std::
+         int tapX = -1, tapY = -1;
+         {
+             HidTouchScreenState ts = {};
+-            if (hidGetTouchScreenStates(&ts, 1) && ts.count > 0)
++            const bool touched = hidGetTouchScreenStates(&ts, 1) && ts.count > 0;
++            // (After RENAME's keyboard, a finger still on the screen from it is no tap here.)
++            if (!touched) touchBlocked = false;
++            if (touched && !touchBlocked)
+             {
+                 touching = true;
+                 touchX = (int)ts.touches[0].x;
+@@ -518,6 +554,34 @@ int PickGame(const std::vector<Launcher::Game>& games, int selected, const std::
+                     note.clear();
+                 }
+             }
++            // X (or the button CONTROLS gave it): RENAME the chosen game, with the console's
++            // keyboard (AskName); the name kept in names.txt in this folder.
++            if (!wasNav && !onSettings && !onTabs && selected >= 0 && selected < (int)games.size() && !games[selected].comingSoon &&
++                (down & (ctl.PadCustom() ? action(Controls::X) : (u64)HidNpadButton_X)))
++            {
++                std::string name;
++                if (AskName(games[selected], name))
++                {
++                    if (Launcher::StoreName(listDir, games[selected], name))
++                    {
++                        // (In the list's order with its new name, still chosen.)
++                        const std::string rom = games[selected].rom;
++                        Launcher::SetCustomName(games[selected], name);
++                        Launcher::Sort(games);
++                        for (size_t k = 0; k < games.size(); k++)
++                            if (games[k].rom == rom) selected = (int)k;
++                        note.clear();
++                    }
++                    else note = "COULD NOT WRITE NAMES.TXT";
++                }
++                // (The buttons and the touch screen as they are now: what closed the keyboard, if
++                // still held, is no press in the list.)
++                padUpdate(&pad);
++                touching = false;
++                touchBlocked = true;
++                held = 0;
++                continue;
++            }
+             if (!wasNav && !onSettings && !onTabs && selected >= 0 && (down & (ctl.PadCustom() ? action(Controls::A) : (u64)HidNpadButton_A)))
+             {
+                 if (Playable(games[selected]))
+@@ -647,12 +711,20 @@ static void MoveSavesIn(const std::string& folder)
+     }
+ }
+ 
+-// Where a DS game's save is: the saves folder of the game's folder (MoveSavesIn), made when missing.
+-static std::string SavePath(const Launcher::Game& g)
++// Where a DS game's saves are: the saves folder of the game's folder (MoveSavesIn), made when
++// missing.
++static std::string SavesFolder(const Launcher::Game& g)
+ {
+-    if (!FulldexFolder(g.folder)) return g.folder + "/" + g.saveName; // (another app's folder: beside the ROM, as it was)
++    if (!FulldexFolder(g.folder)) return g.folder; // (another app's folder: beside the ROM, as it was)
+     mkdir((g.folder + "/saves").c_str(), 0777);
+-    return g.folder + "/saves/" + g.saveName;
++    return g.folder + "/saves";
++}
++
++// Where a DS game's save is: in that folder (FindGames sets it as the game's saves' folder,
++// Game::saveDir), named after its ROM or after the game (Launcher::ReadGame, FindGames).
++static std::string SavePath(const Launcher::Game& g)
++{
++    return (g.saveDir.empty() ? SavesFolder(g) : g.saveDir) + "/" + g.saveName;
+ }
+ 
+ // The games to choose from: rom.nds, or the ROMs in the program's folder (and its roms/ folder);
+@@ -664,11 +736,15 @@ std::vector<Launcher::Game> FindGames(const std::string& dir, bool& ownFolder)
+     std::vector<Launcher::Game> games;
+     Launcher::Game g;
+     ownFolder = true;
+-    // (ReadGame and ScanFolder look for a save beside the ROMs: the DS games' are in saves/.)
++    // (ReadGame and ScanFolder look for a save beside the ROMs: the DS games' are in saves/, which
++    // is then where each looks for its own, and for the game's save from before it had its own.)
+     auto savesIn = [](std::vector<Launcher::Game>& list) {
+-        struct stat st;
+         for (Launcher::Game& x : list)
+-            if (x.platform == Launcher::DS) x.hasSave = stat(SavePath(x).c_str(), &st) == 0;
++            if (x.platform == Launcher::DS)
++            {
++                x.saveDir = SavesFolder(x);
++                Launcher::SetSaveName(x, x.saveName);
++            }
+     };
+     MoveSavesIn(dir);
+     if (Launcher::ReadGame(dir + "/rom.nds", dir, g))
+@@ -722,7 +798,22 @@ std::vector<Launcher::Game> FindGames(const std::string& dir, bool& ownFolder)
+     }
+ #endif
+ #endif
++    // Each ROM in this program's own folder has a save named after it (Launcher::ReadGame), so
++    // that a game's hacks have saves of their own. The older one-game downloads' folders keep the
++    // game's save name (black2.sav), which their saves already have there; and a one-game program
++    // has only the one game to keep apart.
++    for (Launcher::Game& g : games)
++    {
++#ifdef SSR_ALL_GAMES
++        const bool own = g.folder == dir;
++#else
++        const bool own = false;
++#endif
++        if (g.platform == Launcher::DS && !g.legacySave.empty() && !own) Launcher::SetSaveName(g, g.legacySave);
++    }
+     savesIn(games);
++    // The names the player gave games (RENAME, X in the list: names.txt in this folder).
++    Launcher::ApplyNames(games, dir);
+     Launcher::AddComingSoon(games);
+     Launcher::Sort(games);
+     // The same game in two folders (two ROMs, two saves): each says where it is.
+@@ -846,13 +937,8 @@ bool Start(int& argc, char**& argv)
+         return false;
+     }
+ #else
+-    int directGame = -1;
+-    for (size_t i = 0; i < games.size() && !direct.empty(); i++)
+-        if (games[i].code == direct && Playable(games[i]))
+-        {
+-            directGame = (int)i;
+-            break;
+-        }
++    // (A game code, or a ROM's file name for a game with more than one ROM: Launcher::GameArg.)
++    const int directGame = direct.empty() ? -1 : Launcher::FindGame(games, direct, [](const Launcher::Game& g) { return Playable(g); });
+     if (!direct.empty() && directGame < 0) fprintf(stderr, "[switch] --game %s: not in the list\n", direct.c_str());
+     if (directGame >= 0)
+     {
+@@ -923,9 +1009,10 @@ bool Start(int& argc, char**& argv)
+                         if (const unsigned char* data = PcLauncher::BuiltInArt(g.code.c_str(), size)) Launcher::LoadArt(data, size, g.art);
+                 }
+ #endif
++                // (Not a picture the player gave one ROM: one hack's is not another's.)
+                 for (Launcher::Game& g : games)
+                     for (const Launcher::Game& other : games)
+-                        if (g.art.empty() && !other.art.empty() && other.code == g.code) g.art = other.art;
++                        if (g.art.empty() && !other.art.empty() && !other.artOwn && other.code == g.code) g.art = other.art;
+ #ifdef SSR_UPDATER
+                 Updater::Init(dir, dir, g_self);
+ #endif
+@@ -984,8 +1071,11 @@ bool Start(int& argc, char**& argv)
+     memcpy(code, game.code.data(), std::min<size_t>(4, game.code.size()));
+     // SoulSilver and HeartGold (US): the same program, layouts from its own tables.
+     const bool heartSilver = IsGame(code, "IPGE") || IsGame(code, "IPKE");
+-    // The save is named after the game (SoulSilver's name is the one earlier builds used), in
+-    // the saves folder of the game's own folder.
++    // The save, in the saves folder of the game's own folder: named after the ROM in this
++    // program's folder (the save the game's ROMs shared before, named after the game, handed on
++    // the first time), after the game in an older one-game download's (Launcher::ReadGame,
++    // FindGames).
++    Launcher::CarryOverSave(games, game);
+     fprintf(stderr, "[switch] %s (game code %s), save %s%s\n", rom.c_str(), code[0] ? code : "?",
+         SavePath(game).c_str(), ownFolder ? "" : " (from another folder)");
+     // The settings: settings.cfg beside the game (ssrecomp.cfg before; an old one is renamed).
+diff --git a/frontend/ui.h b/frontend/ui.h
+index 9c95494..98bacda 100644
+--- a/frontend/ui.h
++++ b/frontend/ui.h
+@@ -111,12 +111,18 @@ struct Canvas
+             { 0x00, 0x1F, 0x11, 0x11, 0x11, 0x1F, 0x00 },
+             { 0x00, 0x04, 0x0A, 0x0A, 0x11, 0x1F, 0x00 },
+             { 0x18, 0x19, 0x02, 0x04, 0x08, 0x13, 0x03 }, // % (VOLUME)
++            // (For the names players give their games: RENAME in the game list, launcher.h. The
++            // apostrophe has its own, just below.)
++            { 0x00, 0x00, 0x00, 0x00, 0x06, 0x02, 0x04 }, // ,
++            { 0x0C, 0x12, 0x14, 0x08, 0x15, 0x12, 0x0D }, // &
++            { 0x0E, 0x11, 0x01, 0x02, 0x04, 0x00, 0x04 }, // ?
++            { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x1F }, // _ (also the cursor where text is typed)
+         };
+         if (c == '\'') { static const uint8_t apostrophe[] = { 4, 4, 8, 0, 0, 0, 0 }; return apostrophe; }
+         if (c >= 'a' && c <= 'z') c -= 32;
+         if (c >= 'A' && c <= 'Z') return font[c - 'A'];
+         if (c >= '0' && c <= '9') return font[26 + c - '0'];
+-        static const char punct[] = ":-+./<>!()\x01\x02\x03\x04%";
++        static const char punct[] = ":-+./<>!()\x01\x02\x03\x04%,&?_";
+         const char* p = c ? strchr(punct, c) : nullptr;
+         return p ? font[36 + (p - punct)] : nullptr;
+     }
+diff --git a/tests/local_launcher.cpp b/tests/local_launcher.cpp
+index a61f327..2cb0b2d 100644
+--- a/tests/local_launcher.cpp
++++ b/tests/local_launcher.cpp
+@@ -95,10 +95,11 @@ int main() {
+     for (uint32_t pixel:screenshot.px) { const char rgb[]={(char)(pixel>>16),(char)(pixel>>8),(char)pixel}; picture.write(rgb,3); }
+     picture.close();
+     assert(Launcher::ReadGame((root/"valid.nds").string(),(root/"saves").string(),game));
++    assert(game.saveName=="valid.sav"); // (each ROM's save is named after it)
+     assert(PrepareLaunch(game).empty());
+-    std::ofstream(root/"saves"/"soulsilver.sav") << "SAVE-SENTINEL";
++    std::ofstream(root/"saves"/"valid.sav") << "SAVE-SENTINEL";
+     assert(PrepareLaunch(game).empty());
+-    std::ifstream backup(root/"saves"/"soulsilver.sav.prelaunch.bak"); std::string saved; backup >> saved;
++    std::ifstream backup(root/"saves"/"valid.sav.prelaunch.bak"); std::string saved; backup >> saved;
+     assert(saved=="SAVE-SENTINEL");
+     fs::permissions(root/"saves",fs::perms::owner_read|fs::perms::owner_exec);
+     assert(!PrepareLaunch(game).empty());
+diff --git a/tests/test_builtin_cheats.cpp b/tests/test_builtin_cheats.cpp
+index 7a540e3..0fa1937 100644
+--- a/tests/test_builtin_cheats.cpp
++++ b/tests/test_builtin_cheats.cpp
+@@ -1,6 +1,6 @@
+ // The cheats built into Fulldex (builtin_cheats.h): every DS release in the table loads its codes
+-// into the folder POPULAR CHEATS, all off; a code turned on stays on after loading again; a game
+-// with no entry gets none. Build: g++ -std=c++17 -Ifrontend -ImelonDS/src tests/test_builtin_cheats.cpp
++// into the folder POPULAR CHEATS, all off; a code turned on stays on after loading again, for that
++// ROM only (a hack of the game has its own); a game with no entry gets none. Build: g++ -std=c++17 -Ifrontend -ImelonDS/src tests/test_builtin_cheats.cpp
+ //   melonDS/src/ARCodeFile.cpp melonDS/src/ARDatabaseDAT.cpp melonDS/src/CRC32.cpp
+ #include "cheats.h"
+ #include <cassert>
+@@ -32,7 +32,7 @@ int main()
+     for (const BuiltinCheats::Game& g : BuiltinCheats::Games)
+     {
+         Cheats::List list;
+-        list.Load(folder, g.code, nullptr);
++        list.Load(folder, (root / "roms" / (std::string(g.code, 4) + ".nds")).string(), std::string(g.code, 4), nullptr);
+         assert((int)list.items.size() == g.count && g.count >= 14);
+         assert(list.folders.size() == 1 && list.folders[0].name == "POPULAR CHEATS");
+         assert(list.On() == 0);
+@@ -42,15 +42,18 @@ int main()
+     }
+     // On stays on, and only for that game.
+     {
+-        Cheats::List list; list.Load(folder, "IPKP", nullptr);
++        Cheats::List list; list.Load(folder, "roms/HeartGold.nds", "IPKP", nullptr);
+         size_t money = 0; while (list.items[money].key != "fulldex:Max Money") money++;
+         list.Toggle(money);
+-        Cheats::List again; again.Load(folder, "IPKP", nullptr);
++        assert(fs::exists(root / "cheats" / "HeartGold-on.txt"));
++        Cheats::List again; again.Load(folder, "roms/HeartGold.nds", "IPKP", nullptr);
+         assert(again.On() == 1 && again.items[money].on);
+-        Cheats::List other; other.Load(folder, "IPGP", nullptr);
++        Cheats::List hack; hack.Load(folder, "roms/Heartfelt Gold.nds", "IPKP", nullptr);
++        assert(hack.On() == 0 && (int)hack.items.size() == (int)list.items.size());
++        Cheats::List other; other.Load(folder, "roms/SoulSilver.nds", "IPGP", nullptr);
+         assert(other.On() == 0);
+     }
+-    { Cheats::List none; none.Load(folder, "BPEE", nullptr); assert(none.items.empty() && none.folders.empty()); }
++    { Cheats::List none; none.Load(folder, "roms/Emerald.gba", "BPEE", nullptr); assert(none.items.empty() && none.folders.empty()); }
+     fs::remove_all(root);
+-    std::cout << "PASS: built-in cheats for " << games << " DS releases, all off, kept on when turned on\n";
++    std::cout << "PASS: built-in cheats for " << games << " DS releases, all off, kept on when turned on (for that ROM)\n";
+ }
+diff --git a/tools/pc/README.txt b/tools/pc/README.txt
+index 021f665..5a153a4 100644
+--- a/tools/pc/README.txt
++++ b/tools/pc/README.txt
+@@ -20,7 +20,9 @@ GETTING STARTED
+ 3. Start Pokemon Fulldex.exe (Windows) or pokemon-ds-wide (Linux).
+ 4. Pick a game from the list: arrow keys or a controller's D-pad, then Enter or A.
+    You can also double-click a game. Press O in the list to open the roms folder, and H (or
+-   a controller's Y) for the settings: the Esc menu's options, each explained.
++   a controller's Y) for the settings: the Esc menu's options, each explained. F2 (or a right
++   click, or a controller's X) renames the chosen game: hacks of a game (Heartfelt Gold and
++   Iridium are both HeartGold to the program) can each have the name you want.
+    The list shows every game under its console's heading; the tabs at the top (Q and E, a
+    controller's shoulder buttons, or a click) show one console's games.
+ 
+@@ -77,17 +79,30 @@ WHERE THINGS ARE KEPT
+ ---------------------
+ 
+   roms/           your ROMs
+-  icons/          pictures for the game list, if you want them: a JPEG or PNG named by the
+-                  game's code (IREO.jpg Black 2, IRDO White 2, IRBO Black, IRAO White,
+-                  IPKE HeartGold, IPGE SoulSilver, CPUE Platinum), in place of the box art
+-                  the list shows. A picture named like the ROM (Black 2.jpg beside Black 2.nds)
+-                  works too.
+-  saves/          your saved games, one per game (black2.sav, soulsilver.sav, ...)
++  icons/          pictures for the game list, if you want them: a JPEG or PNG named like the
++                  ROM (Heartfelt Gold.jpg for Heartfelt Gold.nds: one for each hack), or by
++                  the game's code for every ROM of the game (IREO.jpg Black 2, IRDO White 2,
++                  IRBO Black, IRAO White, IPKE HeartGold, IPGE SoulSilver, CPUE Platinum), in
++                  place of the box art the list shows. A picture named like the ROM beside it
++                  in roms/ works too.
++  saves/          your saved games, one per ROM, named after it (Black 2.nds: Black 2.sav)
++  cheats/         your cheat codes, a text file per ROM, named after it (Black 2.nds: Black 2.txt)
++  names.txt       the names you gave games (F2 in the list), a line each:
++                  Heartfelt Gold.nds=Heartfelt Gold
+   settings.cfg    your settings
+   game.log        what happened in the last session (send it with a bug report)
+ 
+-To carry on a game from another emulator, put its .sav file in the saves folder with the name
+-above (for example saves/platinum.sav). Back your saves up before you do.
++To carry on a game from another emulator, put its .sav file in the saves folder named like your
++ROM (for example saves/Platinum (USA).sav for roms/Platinum (USA).nds). Back your saves up
++before you do. Saves used to be named after the game (black2.sav, heartgold.sav ...), one
++shared by every ROM of it: the first time one of them starts, that save is copied for each
++of the game's ROMs and the old file kept as a backup (heartgold.sav.bak); a ROM named like it
++(HeartGold.nds) just goes on using it.
++
++Cheats are kept the same way: the codes for a ROM go in a text file named like it (for example
++cheats/Heartfelt Gold.txt for roms/Heartfelt Gold.nds), so a game's hacks don't share them. Files
++named after the game's code (IPKE.txt), which every ROM of the game used to read, are not read any
++more: rename one after the ROM it is for (game.log says when one is left).
+ 
+ 
+ CONTROLS
