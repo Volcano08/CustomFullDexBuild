@@ -1,0 +1,524 @@
+inputs:
+total 20
+drwxr-xr-x 3 runner runner 4096 Nov  6 03:04 .
+drwxr-xr-x 8 runner runner 4096 Nov  6 03:04 ..
+drwxr-xr-x 2 runner runner 4096 Nov  6 03:01 build-gen-tables
+-rw-r--r-- 1 runner runner 7754 Nov  6 03:01 icon-switch.jpg
+
+inputs/build-gen-tables:
+total 1968
+drwxr-xr-x 2 runner runner    4096 Nov  6 03:01 .
+drwxr-xr-x 3 runner runner    4096 Nov  6 03:04 ..
+-rw-r--r-- 1 runner runner    7058 Nov  6 03:01 apps_table.cpp
+-rw-r--r-- 1 runner runner    7678 Nov  6 03:01 portable_images.h
+-rw-r--r-- 1 runner runner  105093 Nov  6 03:01 rc_portable.cpp
+-rw-r--r-- 1 runner runner 1876337 Nov  6 03:01 rc_tables.cpp
+-rw-r--r-- 1 runner runner     121 Nov  6 03:01 sources.cmake
+warning:  pokemon-fulldex-main-github.zip appears to use backslashes as path separators
+docker.io/devkitpro/devkita64:latest
+build-gen-tables: 25120 chunks, no recompiled code, no game code; games: Pokemon SoulSilver (USA), Pokemon HeartGold (Germany, revision 0), Pokemon HeartGold (Spain), Pokemon HeartGold (France, revision 0), Pokemon HeartGold (Italy), Pokemon HeartGold (Japan, revision 0), Pokemon HeartGold (Korea, revision 0), Pokemon HeartGold (USA), Pokemon SoulSilver (Germany, revision 0), Pokemon SoulSilver (Spain), Pokemon SoulSilver (France, revision 0), Pokemon SoulSilver (Italy, revision 0), Pokemon SoulSilver (Japan, revision 0), Pokemon SoulSilver (Korea, revision 0)
+
+== The function tables, from the decompilations' symbol files
+42706 functions (37964 named) from 0 overlays and the main program
+42706 functions (39860 named) from 0 overlays and the main program
+35266 functions (62 with Black 2 names) from 0 overlays and the main program
+35266 functions (62 with Black 2 names) from 0 overlays and the main program
+/home/runner/work/CustomFullDexBuild/CustomFullDexBuild/src/build-switch-all/romfs/funcs/IRAS.txt: 35266 functions
+/home/runner/work/CustomFullDexBuild/CustomFullDexBuild/src/build-switch-all/romfs/funcs/ADAD.txt: 21392 functions
+/home/runner/work/CustomFullDexBuild/CustomFullDexBuild/src/build-switch-all/romfs/funcs/ADAI.txt: 21392 functions
+/home/runner/work/CustomFullDexBuild/CustomFullDexBuild/src/build-switch-all/romfs/funcs/ADAS.txt: 21392 functions
+/home/runner/work/CustomFullDexBuild/CustomFullDexBuild/src/build-switch-all/romfs/funcs/APAD.txt: 21392 functions
+/home/runner/work/CustomFullDexBuild/CustomFullDexBuild/src/build-switch-all/romfs/funcs/APAE.txt: 21392 functions
+/home/runner/work/CustomFullDexBuild/CustomFullDexBuild/src/build-switch-all/romfs/funcs/APAF.txt: 21392 functions
+/home/runner/work/CustomFullDexBuild/CustomFullDexBuild/src/build-switch-all/romfs/funcs/APAS.txt: 21392 functions
+/home/runner/work/CustomFullDexBuild/CustomFullDexBuild/src/build-switch-all/romfs/funcs/CPUS.txt: 34671 functions
+/home/runner/work/CustomFullDexBuild/CustomFullDexBuild/src/build-switch-all/romfs/funcs/IRAS.txt: 35266 functions
+Regional profile package coverage passed
+
+== The HOME Menu icons' loader (tools/switch/forwarder)
+ninja: Entering directory `/home/runner/work/CustomFullDexBuild/CustomFullDexBuild/src/build-switch-all/forwarder-build'
+[1/5] Building ASM object CMakeFiles/hbl.dir/source/trampoline.o
+[2/5] Building C object CMakeFiles/hbl.dir/source/main.o
+[3/5] Linking C executable hbl.elf
+[4/5] Generating /home/runner/work/CustomFullDexBuild/CustomFullDexBuild/src/build-switch-all/romfs/forwarder/main.npdm
+Failed to get system_resource_size (field not present).
+Failed to get version (field not present).
+Failed to get process_category (field not present).
+Failed to get optimize_memory_allocation (field not present).
+Failed to get disable_device_address_space_merge (field not present).
+Failed to get enable_alias_region_extra_size (field not present).
+Failed to get prevent_code_reads (field not present).
+Failed to get signature_key_generation (field not present).
+Failed to get program_id_range_min (field not present).
+Failed to get program_id_range_max (field not present).
+Failed to get program_id (field not present).
+[5/5] Generating /home/runner/work/CustomFullDexBuild/CustomFullDexBuild/src/build-switch-all/romfs/forwarder/main
+total 28
+-rw-r--r-- 1 root root 22261 Nov  6 03:05 main
+-rw-r--r-- 1 root root  1016 Nov  6 03:05 main.npdm
+
+== GBA games too: /home/runner/work/CustomFullDexBuild/CustomFullDexBuild/src/gba
+
+== Compiling for the Switch
+
+== Configuring (build-switch-all)
+-- The C compiler identification is GNU 15.2.0
+-- The CXX compiler identification is GNU 15.2.0
+-- Detected multilib folder: pic
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Check for working C compiler: /opt/devkitpro/devkitA64/bin/aarch64-none-elf-gcc - skipped
+-- Detecting C compile features
+-- Detecting C compile features - done
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Check for working CXX compiler: /opt/devkitpro/devkitA64/bin/aarch64-none-elf-g++ - skipped
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- The ASM compiler identification is GNU
+-- Found assembler: /opt/devkitpro/devkitA64/bin/aarch64-none-elf-gcc
+CMake Deprecation Warning at melonDS/src/teakra/CMakeLists.txt:1 (cmake_minimum_required):
+  Compatibility with CMake < 3.10 will be removed from a future version of
+  CMake.
+
+  Update the VERSION argument <min> value.  Or, use the <min>...<max> syntax
+  to tell CMake that the project requires at least <min> but has been updated
+  to work with policies introduced by <max> or earlier.
+
+
+-- Performing Test CMAKE_HAVE_LIBC_PTHREAD
+-- Performing Test CMAKE_HAVE_LIBC_PTHREAD - Success
+-- Found Threads: TRUE
+-- Looking for shm_open in rt
+-- Looking for shm_open in rt - not found
+-- Found PkgConfig: /opt/devkitpro/portlibs/switch/bin/aarch64-none-elf-pkg-config (found version "1.8.1")
+-- Checking for module 'sdl2'
+--   Found sdl2, version 2.28.5
+-- deko3D: /opt/devkitpro/libnx/lib/libdeko3d.a, shaders compiled by /opt/devkitpro/tools/bin/uam
+-- Found ZLIB: /opt/devkitpro/portlibs/switch/lib/libz.a (found version "1.3.1")
+-- Found Python3: /usr/bin/python3 (found version "3.11.2") found components: Interpreter
+Prepared localised GBA UI at /home/runner/work/CustomFullDexBuild/CustomFullDexBuild/src/build-switch-all/gba-localised
+-- Looking for strdup
+-- Looking for strdup - found
+-- Looking for strlcpy
+-- Looking for strlcpy - found
+-- Looking for strndup
+-- Looking for strndup - found
+-- Looking for vasprintf
+-- Looking for vasprintf - found
+-- Looking for freelocale
+-- Looking for freelocale - found
+-- Looking for newlocale
+-- Looking for newlocale - found
+-- Looking for setlocale
+-- Looking for setlocale - found
+-- Looking for snprintf_l
+-- Looking for snprintf_l - not found
+-- Looking for uselocale
+-- Looking for uselocale - found
+-- Looking for popcount32
+-- Looking for popcount32 - not found
+-- Looking for futimens
+-- Looking for futimens - not found
+-- Looking for futimes
+-- Looking for futimes - not found
+-- Looking for localtime_r
+-- Looking for localtime_r - found
+-- Looking for realpath
+-- Looking for realpath - found
+-- Looking for strtof_l
+-- Looking for strtof_l - found
+-- Looking for include file xlocale.h
+-- Looking for include file xlocale.h - not found
+-- Looking for crc32
+-- Looking for crc32 - not found
+CMake Warning (dev) at home/pokemon-gba-wide/mgba/CMakeLists.txt:1125 (install):
+  Policy CMP0177 is not set: install() DESTINATION paths are normalized.  Run
+  "cmake --help-policy CMP0177" for policy details.  Use the cmake_policy
+  command to set the policy and suppress this warning.
+This warning is for project developers.  Use -Wno-dev to suppress it.
+
+CMake Warning (dev) at home/pokemon-gba-wide/mgba/CMakeLists.txt:1126 (install):
+  Policy CMP0177 is not set: install() DESTINATION paths are normalized.  Run
+  "cmake --help-policy CMP0177" for policy details.  Use the cmake_policy
+  command to set the policy and suppress this warning.
+This warning is for project developers.  Use -Wno-dev to suppress it.
+
+-- Checking for module 'libcurl'
+--   Found libcurl, version 7.69.1
+-- Configuring done (3.0s)
+-- Generating done (0.0s)
+-- Build files have been written to: /home/runner/work/CustomFullDexBuild/CustomFullDexBuild/src/build-switch-all
+
+== Compiling with 4 jobs (the first time takes a while)
+ninja: Entering directory `build-switch-all'
+[0/2] Re-checking globbed directories...
+[1/269] Building CXX object CMakeFiles/gamecode.dir/build-gen-tables/rc_portable.o
+[2/269] Building C object CMakeFiles/rcheevos.dir/frontend/thirdparty/rcheevos/src/rapi/rc_api_editor.o
+[3/269] Building C object CMakeFiles/rcheevos.dir/frontend/thirdparty/rcheevos/src/rapi/rc_api_info.o
+[4/269] Building C object CMakeFiles/rcheevos.dir/frontend/thirdparty/rcheevos/src/rapi/rc_api_user.o
+[5/269] Building CXX object CMakeFiles/gamecode.dir/build-gen-tables/rc_tables.o
+[6/269] Building C object CMakeFiles/rcheevos.dir/frontend/thirdparty/rcheevos/src/rapi/rc_api_runtime.o
+[7/269] Building C object CMakeFiles/rcheevos.dir/frontend/thirdparty/rcheevos/src/rc_client_external.o
+[8/269] Building C object CMakeFiles/rcheevos.dir/frontend/thirdparty/rcheevos/src/rapi/rc_api_common.o
+[9/269] Building C object CMakeFiles/rcheevos.dir/frontend/thirdparty/rcheevos/src/rc_compat.o
+[10/269] Building C object CMakeFiles/rcheevos.dir/frontend/thirdparty/rcheevos/src/rc_version.o
+[11/269] Building C object CMakeFiles/rcheevos.dir/frontend/thirdparty/rcheevos/src/rc_util.o
+[12/269] Building C object CMakeFiles/rcheevos.dir/frontend/thirdparty/rcheevos/src/rcheevos/alloc.o
+[13/269] Building C object CMakeFiles/rcheevos.dir/frontend/thirdparty/rcheevos/src/rcheevos/condition.o
+[14/269] Building C object CMakeFiles/rcheevos.dir/frontend/thirdparty/rcheevos/src/rcheevos/consoleinfo.o
+[15/269] Building C object CMakeFiles/rcheevos.dir/frontend/thirdparty/rcheevos/src/rcheevos/lboard.o
+[16/269] Building C object CMakeFiles/rcheevos.dir/frontend/thirdparty/rcheevos/src/rcheevos/condset.o
+[17/269] Building C object CMakeFiles/rcheevos.dir/frontend/thirdparty/rcheevos/src/rcheevos/format.o
+[18/269] Building C object CMakeFiles/rcheevos.dir/frontend/thirdparty/rcheevos/src/rcheevos/operand.o
+[19/269] Building C object CMakeFiles/rcheevos.dir/frontend/thirdparty/rcheevos/src/rcheevos/memref.o
+[20/269] Building C object CMakeFiles/rcheevos.dir/frontend/thirdparty/rcheevos/src/rcheevos/rc_validate.o
+[21/269] Building C object CMakeFiles/rcheevos.dir/frontend/thirdparty/rcheevos/src/rcheevos/runtime.o
+[22/269] Building C object CMakeFiles/rcheevos.dir/frontend/thirdparty/rcheevos/src/rcheevos/richpresence.o
+[23/269] Building C object CMakeFiles/rcheevos.dir/frontend/thirdparty/rcheevos/src/rcheevos/trigger.o
+[24/269] Building C object CMakeFiles/rcheevos.dir/frontend/thirdparty/rcheevos/src/rcheevos/value.o
+[25/269] Building C object CMakeFiles/rcheevos.dir/frontend/thirdparty/rcheevos/src/rcheevos/runtime_progress.o
+[26/269] Building C object CMakeFiles/rcheevos.dir/frontend/thirdparty/rcheevos/src/rhash/aes.o
+[27/269] Building C object CMakeFiles/rcheevos.dir/frontend/thirdparty/rcheevos/src/rhash/cdreader.o
+[28/269] Building C object CMakeFiles/rcheevos.dir/frontend/thirdparty/rcheevos/src/rhash/hash.o
+[29/269] Building C object CMakeFiles/rcheevos.dir/frontend/thirdparty/rcheevos/src/rhash/hash_encrypted.o
+[30/269] Building C object CMakeFiles/rcheevos.dir/frontend/thirdparty/rcheevos/src/rhash/hash_disc.o
+[31/269] Building C object CMakeFiles/rcheevos.dir/frontend/thirdparty/rcheevos/src/rhash/hash_rom.o
+[32/269] Building C object CMakeFiles/rcheevos.dir/frontend/thirdparty/rcheevos/src/rc_client.o
+[33/269] Compiling the shader final_fsh_dksh
+[34/269] Compiling the shader final_vsh_dksh
+[35/269] Compiling the shader probe_fsh
+[36/269] Compiling the shader probe_vsh
+[37/269] Building C object CMakeFiles/rcheevos.dir/frontend/thirdparty/rcheevos/src/rhash/hash_zip.o
+[38/269] Building C object CMakeFiles/rcheevos.dir/frontend/thirdparty/rcheevos/src/rhash/md5.o
+[39/269] Compiling the shader wide_fsh_dksh
+[40/269] Compiling the shader wide_fsh_early_dksh
+[41/269] Linking C static library librcheevos.a
+[42/269] Compiling the shader wide_vsh_dksh
+[43/269] Compiling the shader wide_fsh_texbuf_dksh
+[44/269] Compiling the shader wide_fsh_texbuf_early_dksh
+[45/269] Building CXX object melonDS/src/teakra/src/CMakeFiles/teakra.dir/apbp.o
+[46/269] Building CXX object melonDS/src/teakra/src/CMakeFiles/teakra.dir/ahbm.o
+[47/269] Building CXX object melonDS/src/teakra/src/CMakeFiles/teakra.dir/btdmp.o
+[48/269] Building CXX object melonDS/src/teakra/src/CMakeFiles/teakra.dir/dma.o
+[49/269] Building CXX object melonDS/src/teakra/src/CMakeFiles/teakra.dir/timer.o
+[50/269] Building CXX object melonDS/src/teakra/src/CMakeFiles/teakra.dir/memory_interface.o
+[51/269] Building CXX object melonDS/src/teakra/src/CMakeFiles/teakra.dir/parser.o
+[52/269] Building CXX object melonDS/src/teakra/src/CMakeFiles/teakra.dir/teakra.o
+[53/269] cd /home/runner/work/CustomFullDexBuild/CustomFullDexBuild/src/home/pokemon-gba-wide/mgba && /usr/bin/cmake -DBINARY_NAME=mgba -DCONFIG_FILE=/home/runner/work/CustomFullDexBuild/CustomFullDexBuild/src/home/pokemon-gba-wide/mgba/src/core/version.c.in -DOUT_FILE=/home/runner/work/CustomFullDexBuild/CustomFullDexBuild/src/build-switch-all/gbaw/mgba/version.c -P /home/runner/work/CustomFullDexBuild/CustomFullDexBuild/src/home/pokemon-gba-wide/mgba/version.cmake
+[54/269] Building C object gbaw/mgba/CMakeFiles/mgba.dir/src/core/bitmap-cache.o
+[55/269] Building C object gbaw/mgba/CMakeFiles/mgba.dir/src/core/cache-set.o
+[56/269] Building CXX object melonDS/src/teakra/src/CMakeFiles/teakra.dir/mmio.o
+[57/269] Building C object gbaw/mgba/CMakeFiles/mgba.dir/src/core/cheats.o
+[58/269] Building C object gbaw/mgba/CMakeFiles/mgba.dir/src/core/config.o
+[59/269] Building C object gbaw/mgba/CMakeFiles/mgba.dir/src/core/core.o
+[60/269] Building C object gbaw/mgba/CMakeFiles/mgba.dir/src/core/directories.o
+[61/269] Building C object gbaw/mgba/CMakeFiles/mgba.dir/src/core/interface.o
+[62/269] Building C object gbaw/mgba/CMakeFiles/mgba.dir/src/core/lockstep.o
+[63/269] Building C object gbaw/mgba/CMakeFiles/mgba.dir/src/core/input.o
+[64/269] Building C object gbaw/mgba/CMakeFiles/mgba.dir/src/core/map-cache.o
+[65/269] Building C object gbaw/mgba/CMakeFiles/mgba.dir/src/core/log.o
+[66/269] Building C object gbaw/mgba/CMakeFiles/mgba.dir/src/core/mem-search.o
+[67/269] Building C object gbaw/mgba/CMakeFiles/mgba.dir/src/core/rewind.o
+[68/269] Building C object gbaw/mgba/CMakeFiles/mgba.dir/src/core/serialize.o
+[69/269] Building C object gbaw/mgba/CMakeFiles/mgba.dir/src/core/sync.o
+[70/269] Building C object gbaw/mgba/CMakeFiles/mgba.dir/src/core/tile-cache.o
+[71/269] Building C object gbaw/mgba/CMakeFiles/mgba.dir/src/core/timing.o
+[72/269] Building C object gbaw/mgba/CMakeFiles/mgba.dir/src/core/library.o
+[73/269] Building C object gbaw/mgba/CMakeFiles/mgba.dir/src/core/thread.o
+[74/269] Building C object gbaw/mgba/CMakeFiles/mgba.dir/src/arm/arm.o
+[75/269] Building C object gbaw/mgba/CMakeFiles/mgba.dir/src/arm/decoder.o
+[76/269] Building C object gbaw/mgba/CMakeFiles/mgba.dir/src/arm/decoder-thumb.o
+[77/269] Building C object gbaw/mgba/CMakeFiles/mgba.dir/src/arm/decoder-arm.o
+[78/269] Building C object gbaw/mgba/CMakeFiles/mgba.dir/src/arm/isa-thumb.o
+[79/269] Building C object gbaw/mgba/CMakeFiles/mgba.dir/src/gb/audio.o
+[80/269] Building C object gbaw/mgba/CMakeFiles/mgba.dir/src/gba/audio.o
+[81/269] Building C object gbaw/mgba/CMakeFiles/mgba.dir/src/gba/bios.o
+[82/269] Building C object gbaw/mgba/CMakeFiles/mgba.dir/src/gba/cart/ereader.o
+[83/269] Building C object gbaw/mgba/CMakeFiles/mgba.dir/src/gba/cart/gpio.o
+[84/269] Building C object gbaw/mgba/CMakeFiles/mgba.dir/src/gba/cart/matrix.o
+[85/269] Building C object gbaw/mgba/CMakeFiles/mgba.dir/src/gba/cart/unlicensed.o
+[86/269] Building C object gbaw/mgba/CMakeFiles/mgba.dir/src/gba/cart/vfame.o
+[87/269] Building C object gbaw/mgba/CMakeFiles/mgba.dir/src/gba/cheats.o
+[88/269] Building C object gbaw/mgba/CMakeFiles/mgba.dir/src/arm/isa-arm.o
+[89/269] Building C object gbaw/mgba/CMakeFiles/mgba.dir/src/gba/cheats/codebreaker.o
+[90/269] Building C object gbaw/mgba/CMakeFiles/mgba.dir/src/gba/cheats/gameshark.o
+[91/269] Building C object gbaw/mgba/CMakeFiles/mgba.dir/src/gba/cheats/parv3.o
+[92/269] Building C object gbaw/mgba/CMakeFiles/mgba.dir/src/gba/dma.o
+[93/269] Building C object gbaw/mgba/CMakeFiles/mgba.dir/src/gba/core.o
+[94/269] Building C object gbaw/mgba/CMakeFiles/mgba.dir/src/gba/hle-bios.o
+[95/269] Building C object gbaw/mgba/CMakeFiles/mgba.dir/src/gba/input.o
+[96/269] Building C object gbaw/mgba/CMakeFiles/mgba.dir/src/gba/gba.o
+[97/269] Building C object gbaw/mgba/CMakeFiles/mgba.dir/src/gba/io.o
+[98/269] Building C object gbaw/mgba/CMakeFiles/mgba.dir/src/gba/overrides.o
+[99/269] Building C object gbaw/mgba/CMakeFiles/mgba.dir/src/gba/renderers/cache-set.o
+[100/269] Building C object gbaw/mgba/CMakeFiles/mgba.dir/src/gba/renderers/common.o
+[101/269] Building C object gbaw/mgba/CMakeFiles/mgba.dir/src/gba/renderers/gl.o
+[102/269] Building C object gbaw/mgba/CMakeFiles/mgba.dir/src/gba/memory.o
+[103/269] Building C object gbaw/mgba/CMakeFiles/mgba.dir/src/gba/renderers/software-bg.o
+[104/269] Building C object gbaw/mgba/CMakeFiles/mgba.dir/src/gba/renderers/software-obj.o
+[105/269] Building C object gbaw/mgba/CMakeFiles/mgba.dir/src/gba/renderers/video-software.o
+[106/269] Building C object gbaw/mgba/CMakeFiles/mgba.dir/src/gba/savedata.o
+[107/269] Building C object gbaw/mgba/CMakeFiles/mgba.dir/src/gba/serialize.o
+[108/269] Building C object gbaw/mgba/CMakeFiles/mgba.dir/src/gba/sharkport.o
+[109/269] Building C object gbaw/mgba/CMakeFiles/mgba.dir/src/gba/sio.o
+[110/269] Building C object gbaw/mgba/CMakeFiles/mgba.dir/src/gba/sio/gbp.o
+[111/269] Building C object gbaw/mgba/CMakeFiles/mgba.dir/src/gba/timer.o
+[112/269] Building C object gbaw/mgba/CMakeFiles/mgba.dir/src/gba/renderers/software-mode0.o
+[113/269] Building C object gbaw/mgba/CMakeFiles/mgba.dir/src/util/circle-buffer.o
+[114/269] Building C object gbaw/mgba/CMakeFiles/mgba.dir/src/gba/video.o
+[115/269] Building C object gbaw/mgba/CMakeFiles/mgba.dir/src/util/crc32.o
+[116/269] Building C object gbaw/mgba/CMakeFiles/mgba.dir/src/util/configuration.o
+[117/269] Building C object gbaw/mgba/CMakeFiles/mgba.dir/src/util/formatting.o
+[118/269] Building C object gbaw/mgba/CMakeFiles/mgba.dir/src/util/gbk-table.o
+[119/269] Building C object gbaw/mgba/CMakeFiles/mgba.dir/src/util/hash.o
+[120/269] Building C object gbaw/mgba/CMakeFiles/mgba.dir/src/util/md5.o
+[121/269] Building C object gbaw/mgba/CMakeFiles/mgba.dir/src/util/sha1.o
+[122/269] Building C object gbaw/mgba/CMakeFiles/mgba.dir/src/util/string.o
+[123/269] Building C object gbaw/mgba/CMakeFiles/mgba.dir/src/util/table.o
+[124/269] Building C object gbaw/mgba/CMakeFiles/mgba.dir/src/util/vector.o
+[125/269] Building C object gbaw/mgba/CMakeFiles/mgba.dir/src/util/vfs.o
+[126/269] Building C object gbaw/mgba/CMakeFiles/mgba.dir/src/util/audio-buffer.o
+[127/269] Building C object gbaw/mgba/CMakeFiles/mgba.dir/src/util/audio-resampler.o
+[128/269] Building C object gbaw/mgba/CMakeFiles/mgba.dir/src/util/elf-read.o
+[129/269] Building C object gbaw/mgba/CMakeFiles/mgba.dir/src/util/geometry.o
+[130/269] Building C object gbaw/mgba/CMakeFiles/mgba.dir/src/util/convolve.o
+[131/269] Building C object gbaw/mgba/CMakeFiles/mgba.dir/src/util/image/export.o
+[132/269] Building C object gbaw/mgba/CMakeFiles/mgba.dir/src/util/image/font.o
+[133/269] Building C object gbaw/mgba/CMakeFiles/mgba.dir/src/util/image/png-io.o
+[134/269] Building C object gbaw/mgba/CMakeFiles/mgba.dir/src/util/interpolator.o
+[135/269] Building C object gbaw/mgba/CMakeFiles/mgba.dir/src/util/patch.o
+[136/269] Building C object gbaw/mgba/CMakeFiles/mgba.dir/src/util/patch-fast.o
+[137/269] Building C object gbaw/mgba/CMakeFiles/mgba.dir/src/util/image.o
+[138/269] Building C object gbaw/mgba/CMakeFiles/mgba.dir/src/util/patch-ips.o
+[139/269] Building C object gbaw/mgba/CMakeFiles/mgba.dir/src/util/ring-fifo.o
+[140/269] Building C object gbaw/mgba/CMakeFiles/mgba.dir/src/util/patch-ups.o
+[141/269] Building C object gbaw/mgba/CMakeFiles/mgba.dir/src/util/sfo.o
+[142/269] Building C object gbaw/mgba/CMakeFiles/mgba.dir/version.o
+[143/269] Building C object gbaw/mgba/CMakeFiles/mgba.dir/src/util/text-codec.o
+[144/269] Building C object gbaw/mgba/CMakeFiles/mgba.dir/src/util/vfs/vfs-fifo.o
+[145/269] Building C object gbaw/mgba/CMakeFiles/mgba.dir/src/util/vfs/vfs-mem.o
+[146/269] Building C object gbaw/mgba/CMakeFiles/mgba.dir/src/util/memory.o
+[147/269] Building C object gbaw/mgba/CMakeFiles/mgba.dir/src/util/vfs/vfs-fd.o
+[148/269] Building C object gbaw/mgba/CMakeFiles/mgba.dir/src/third-party/inih/ini.o
+[149/269] Building C object gbaw/mgba/CMakeFiles/mgba.dir/src/util/vfs/vfs-dirent.o
+[150/269] Building C object gbaw/mgba/CMakeFiles/mgba.dir/src/gba/sio/dolphin.o
+[151/269] Building C object gbaw/mgba/CMakeFiles/mgba.dir/src/gba/sio/lockstep.o
+[152/269] Building C object gbaw/mgba/CMakeFiles/mgba.dir/src/gba/extra/battlechip.o
+[153/269] Building C object gbaw/mgba/CMakeFiles/mgba.dir/src/platform/opengl/gles2.o
+[154/269] Building C object gbaw/mgba/CMakeFiles/mgba.dir/src/gba/extra/proxy.o
+[155/269] Building C object gbaw/mgba/CMakeFiles/mgba.dir/src/feature/commandline.o
+[156/269] Building C object gbaw/mgba/CMakeFiles/mgba.dir/src/feature/proxy-backend.o
+[157/269] Building C object gbaw/mgba/CMakeFiles/mgba.dir/src/feature/video-backend.o
+[158/269] Building C object gbaw/mgba/CMakeFiles/mgba.dir/src/feature/thread-proxy.o
+[159/269] Building C object gbaw/mgba/CMakeFiles/mgba.dir/src/feature/updater.o
+[160/269] Building C object gbaw/mgba/CMakeFiles/mgba.dir/src/feature/video-logger.o
+[161/269] Linking C static library gbaw/mgba/libmgba.a
+[162/269] Generating gen/art.h
+[163/269] Generating gen/patches.h
+[164/269] Building CXX object melonDS/src/teakra/src/CMakeFiles/teakra.dir/processor.o
+[165/269] Building CXX object melonDS/src/teakra/src/CMakeFiles/teakra.dir/disassembler.o
+[166/269] Linking CXX static library melonDS/src/teakra/src/libteakra.a
+[167/269] Generating wide_gpu/wide_vsh_text.h
+[168/269] Generating wide_gpu/wide_fsh_text.h
+[169/269] Generating wide_gpu/final_vsh_text.h
+[170/269] Generating wide_gpu/final_fsh_text.h
+[171/269] Building CXX object gbaw/CMakeFiles/gbawide.dir/frontend/third_party/xbrz/xbrz.o
+[172/269] Building CXX object CMakeFiles/ssrecomp.dir/frontend/achievements.o
+[173/269] Building CXX object CMakeFiles/ssrecomp.dir/frontend/achievements_http.o
+[174/269] Building CXX object CMakeFiles/ssrecomp.dir/frontend/platform.o
+[175/269] Building CXX object CMakeFiles/ssrecomp.dir/runtime/recomp_mem.o
+[176/269] Building CXX object CMakeFiles/ssrecomp.dir/build-gen-tables/apps_table.o
+[177/269] Building CXX object CMakeFiles/ssrecomp.dir/runtime/recomp_rt.o
+[178/269] Building CXX object CMakeFiles/ssrecomp.dir/frontend/dekoprobe.o
+[179/269] Building CXX object CMakeFiles/ssrecomp.dir/frontend/switch_forwarder.o
+[180/269] Building CXX object CMakeFiles/ssrecomp.dir/frontend/updater.o
+[181/269] Building CXX object CMakeFiles/ssrecomp.dir/frontend/glcontext.o
+[182/269] Building CXX object melonDS/src/CMakeFiles/core.dir/ARCodeFile.o
+[183/269] Building CXX object melonDS/src/CMakeFiles/core.dir/ARDatabaseDAT.o
+[184/269] Building CXX object melonDS/src/CMakeFiles/core.dir/AREngine.o
+[185/269] Building CXX object melonDS/src/CMakeFiles/core.dir/ARM.o
+[186/269] Building CXX object melonDS/src/CMakeFiles/core.dir/ARMInterpreter.o
+[187/269] Building CXX object melonDS/src/CMakeFiles/core.dir/ARMInterpreter_ALU.o
+[188/269] Building CXX object melonDS/src/CMakeFiles/core.dir/ARMInterpreter_Branch.o
+[189/269] Building CXX object melonDS/src/CMakeFiles/core.dir/ARMInterpreter_LoadStore.o
+[190/269] Building CXX object melonDS/src/CMakeFiles/core.dir/CP15.o
+[191/269] Building CXX object melonDS/src/CMakeFiles/core.dir/CRC32.o
+[192/269] Building CXX object melonDS/src/CMakeFiles/core.dir/DMA.o
+[193/269] Building CXX object melonDS/src/CMakeFiles/core.dir/DMA_Timings.o
+[194/269] Building CXX object gbaw/CMakeFiles/gbawide.dir/frontend/main.o
+[195/269] Building CXX object melonDS/src/CMakeFiles/core.dir/DSi.o
+[196/269] Building CXX object melonDS/src/CMakeFiles/core.dir/DSi_AES.o
+[197/269] Building CXX object melonDS/src/CMakeFiles/core.dir/DSi_Camera.o
+[198/269] Building CXX object melonDS/src/CMakeFiles/core.dir/DSi_DSP.o
+[199/269] Building CXX object melonDS/src/CMakeFiles/core.dir/DSi_I2C.o
+[200/269] Building CXX object melonDS/src/CMakeFiles/core.dir/DSi_I2S.o
+[201/269] Building CXX object melonDS/src/CMakeFiles/core.dir/DSi_NAND.o
+[202/269] Building CXX object melonDS/src/CMakeFiles/core.dir/DSi_NDMA.o
+[203/269] Building CXX object melonDS/src/CMakeFiles/core.dir/DSi_SD.o
+[204/269] Building CXX object melonDS/src/CMakeFiles/core.dir/DSi_NWifi.o
+[205/269] Building CXX object melonDS/src/CMakeFiles/core.dir/FATIO.o
+[206/269] Building CXX object melonDS/src/CMakeFiles/core.dir/DSi_SPI_TSC.o
+[207/269] Building CXX object melonDS/src/CMakeFiles/core.dir/GBACart.o
+[208/269] Building CXX object melonDS/src/CMakeFiles/core.dir/FATStorage.o
+[209/269] Building CXX object CMakeFiles/ssrecomp.dir/frontend/switch_platform.o
+[210/269] Building CXX object melonDS/src/CMakeFiles/core.dir/GBACartMotionPak.o
+[211/269] Building CXX object melonDS/src/CMakeFiles/core.dir/GPU2D.o
+[212/269] Building CXX object melonDS/src/CMakeFiles/core.dir/GPU.o
+[213/269] Building CXX object melonDS/src/CMakeFiles/core.dir/GPU2D_Soft.o
+[214/269] Building CXX object melonDS/src/CMakeFiles/core.dir/GPU3D_Soft.o
+[215/269] Building CXX object melonDS/src/CMakeFiles/core.dir/GPU3D.o
+[216/269] Building CXX object melonDS/src/CMakeFiles/core.dir/GPU3D_Texcache.o
+[217/269] Building CXX object melonDS/src/CMakeFiles/core.dir/GPU3D_WideGpu.o
+[218/269] Building CXX object melonDS/src/CMakeFiles/core.dir/Mic.o
+[219/269] Building CXX object melonDS/src/CMakeFiles/core.dir/NDSCart.o
+[220/269] Building CXX object melonDS/src/CMakeFiles/core.dir/NDS.o
+[221/269] Building CXX object melonDS/src/CMakeFiles/core.dir/ROMList.o
+[222/269] Building CXX object melonDS/src/CMakeFiles/core.dir/FreeBIOS.o
+[223/269] Building CXX object melonDS/src/CMakeFiles/core.dir/NDSCartR4.o
+[224/269] Building CXX object melonDS/src/CMakeFiles/core.dir/Savestate.o
+[225/269] Building CXX object melonDS/src/CMakeFiles/core.dir/RTC.o
+[226/269] Building CXX object melonDS/src/CMakeFiles/core.dir/SPI_Firmware.o
+[227/269] Building CXX object melonDS/src/CMakeFiles/core.dir/SPI.o
+[228/269] Building CXX object melonDS/src/CMakeFiles/core.dir/Utils.o
+[229/269] Building CXX object melonDS/src/CMakeFiles/core.dir/GPU3D_Wide.o
+[230/269] Building CXX object melonDS/src/CMakeFiles/core.dir/SPU.o
+[231/269] Building CXX object melonDS/src/CMakeFiles/core.dir/Wifi.o
+[232/269] Building CXX object melonDS/src/CMakeFiles/core.dir/WifiAP.o
+[233/269] Building CXX object melonDS/src/CMakeFiles/core.dir/DSP_HLE/UcodeBase.o
+[234/269] Building CXX object melonDS/src/CMakeFiles/core.dir/DSP_HLE/AACUcode.o
+[235/269] Building CXX object melonDS/src/CMakeFiles/core.dir/DSP_HLE/G711Ucode.o
+[236/269] Building C object melonDS/src/CMakeFiles/core.dir/fatfs/ffsystem.o
+[237/269] Building C object melonDS/src/CMakeFiles/core.dir/fatfs/ffunicode.o
+[238/269] Building C object melonDS/src/CMakeFiles/core.dir/sha1/sha1.o
+[239/269] Building CXX object melonDS/src/CMakeFiles/core.dir/DSP_HLE/GraphicsUcode.o
+[240/269] Building C object melonDS/src/CMakeFiles/core.dir/tiny-AES-c/aes.o
+[241/269] Building C object melonDS/src/CMakeFiles/core.dir/blip-buf/blip_buf.o
+[242/269] Building C object melonDS/src/CMakeFiles/core.dir/fatfs/ff.o
+[243/269] Building CXX object melonDS/src/CMakeFiles/core.dir/GPU_OpenGL.o
+[244/269] Building C object melonDS/src/CMakeFiles/core.dir/xxhash/xxhash.o
+[245/269] Building CXX object CMakeFiles/ssrecomp.dir/frontend/main.o
+[246/269] Building CXX object melonDS/src/CMakeFiles/core.dir/GPU3D_OpenGL.o
+[247/269] Building CXX object melonDS/src/CMakeFiles/core.dir/GPU3D_TexcacheOpenGL.o
+[248/269] Building CXX object melonDS/src/CMakeFiles/core.dir/OpenGLSupport.o
+[249/269] Building C object melonDS/src/CMakeFiles/core.dir/frontend/glad/glad.o
+[250/269] Building CXX object melonDS/src/CMakeFiles/core.dir/GPU3D_Compute.o
+[251/269] Building CXX object melonDS/src/CMakeFiles/core.dir/GPU3D_GLThread.o
+[252/269] Building CXX object melonDS/src/CMakeFiles/core.dir/ARM_InstrInfo.o
+[253/269] Building CXX object melonDS/src/CMakeFiles/core.dir/GPU3D_WideGpu_GL.o
+[254/269] Building CXX object melonDS/src/CMakeFiles/core.dir/ARMJIT_Global.o
+[255/269] Building CXX object melonDS/src/CMakeFiles/core.dir/dolphin/CommonFuncs.o
+[256/269] Building CXX object melonDS/src/CMakeFiles/core.dir/dolphin/MathUtil.o
+[257/269] Building CXX object melonDS/src/CMakeFiles/core.dir/ARMJIT.o
+[258/269] Building CXX object melonDS/src/CMakeFiles/core.dir/ARMJIT_Memory.o
+[259/269] Building CXX object melonDS/src/CMakeFiles/core.dir/dolphin/Arm64Emitter.o
+[260/269] Building CXX object melonDS/src/CMakeFiles/core.dir/ARMJIT_A64/ARMJIT_ALU.o
+[261/269] Building ASM object melonDS/src/CMakeFiles/core.dir/ARMJIT_A64/ARMJIT_Linkage.obj
+[262/269] Building CXX object melonDS/src/CMakeFiles/core.dir/ARMJIT_A64/ARMJIT_Compiler.o
+[263/269] Linking CXX static library gbaw/libgbawide.a
+[264/269] Building CXX object melonDS/src/CMakeFiles/core.dir/ARMJIT_A64/ARMJIT_Branch.o
+[265/269] Building CXX object melonDS/src/CMakeFiles/core.dir/ARMJIT_A64/ARMJIT_LoadStore.o
+[266/269] Building CXX object melonDS/src/CMakeFiles/core.dir/GPU3D_WideGpu_Deko.o
+[267/269] Linking CXX static library melonDS/src/libcore.a
+[268/269] Linking CXX executable ssrecomp.elf
+[269/269] Making ssrecomp.nro
+-- Icon: /home/runner/work/CustomFullDexBuild/CustomFullDexBuild/src/build-switch-all/icon.jpg
+-- romfs: /home/runner/work/CustomFullDexBuild/CustomFullDexBuild/src/build-switch-all/romfs
+Visiting directories...
+Calculating metadata...
+Writing /home/runner/work/CustomFullDexBuild/CustomFullDexBuild/src/build-switch-all/romfs/forwarder/main to RomFS image...
+Writing /home/runner/work/CustomFullDexBuild/CustomFullDexBuild/src/build-switch-all/romfs/forwarder/main.npdm to RomFS image...
+Writing /home/runner/work/CustomFullDexBuild/CustomFullDexBuild/src/build-switch-all/romfs/funcs/ADAD.txt to RomFS image...
+Writing /home/runner/work/CustomFullDexBuild/CustomFullDexBuild/src/build-switch-all/romfs/funcs/ADAE.txt to RomFS image...
+Writing /home/runner/work/CustomFullDexBuild/CustomFullDexBuild/src/build-switch-all/romfs/funcs/ADAI.txt to RomFS image...
+Writing /home/runner/work/CustomFullDexBuild/CustomFullDexBuild/src/build-switch-all/romfs/funcs/ADAS.txt to RomFS image...
+Writing /home/runner/work/CustomFullDexBuild/CustomFullDexBuild/src/build-switch-all/romfs/funcs/APAD.txt to RomFS image...
+Writing /home/runner/work/CustomFullDexBuild/CustomFullDexBuild/src/build-switch-all/romfs/funcs/APAE.txt to RomFS image...
+Writing /home/runner/work/CustomFullDexBuild/CustomFullDexBuild/src/build-switch-all/romfs/funcs/APAF.txt to RomFS image...
+Writing /home/runner/work/CustomFullDexBuild/CustomFullDexBuild/src/build-switch-all/romfs/funcs/APAK.txt to RomFS image...
+Writing /home/runner/work/CustomFullDexBuild/CustomFullDexBuild/src/build-switch-all/romfs/funcs/APAS.txt to RomFS image...
+Writing /home/runner/work/CustomFullDexBuild/CustomFullDexBuild/src/build-switch-all/romfs/funcs/CPUD.txt to RomFS image...
+Writing /home/runner/work/CustomFullDexBuild/CustomFullDexBuild/src/build-switch-all/romfs/funcs/CPUE.txt to RomFS image...
+Writing /home/runner/work/CustomFullDexBuild/CustomFullDexBuild/src/build-switch-all/romfs/funcs/CPUF.txt to RomFS image...
+Writing /home/runner/work/CustomFullDexBuild/CustomFullDexBuild/src/build-switch-all/romfs/funcs/CPUI.txt to RomFS image...
+Writing /home/runner/work/CustomFullDexBuild/CustomFullDexBuild/src/build-switch-all/romfs/funcs/CPUJ.txt to RomFS image...
+Writing /home/runner/work/CustomFullDexBuild/CustomFullDexBuild/src/build-switch-all/romfs/funcs/CPUK.txt to RomFS image...
+Writing /home/runner/work/CustomFullDexBuild/CustomFullDexBuild/src/build-switch-all/romfs/funcs/CPUS.txt to RomFS image...
+Writing /home/runner/work/CustomFullDexBuild/CustomFullDexBuild/src/build-switch-all/romfs/funcs/IRAD.txt to RomFS image...
+Writing /home/runner/work/CustomFullDexBuild/CustomFullDexBuild/src/build-switch-all/romfs/funcs/IRAF.txt to RomFS image...
+Writing /home/runner/work/CustomFullDexBuild/CustomFullDexBuild/src/build-switch-all/romfs/funcs/IRAI.txt to RomFS image...
+Writing /home/runner/work/CustomFullDexBuild/CustomFullDexBuild/src/build-switch-all/romfs/funcs/IRAJ.txt to RomFS image...
+Writing /home/runner/work/CustomFullDexBuild/CustomFullDexBuild/src/build-switch-all/romfs/funcs/IRAK.txt to RomFS image...
+Writing /home/runner/work/CustomFullDexBuild/CustomFullDexBuild/src/build-switch-all/romfs/funcs/IRAO.txt to RomFS image...
+Writing /home/runner/work/CustomFullDexBuild/CustomFullDexBuild/src/build-switch-all/romfs/funcs/IRAS.txt to RomFS image...
+Writing /home/runner/work/CustomFullDexBuild/CustomFullDexBuild/src/build-switch-all/romfs/funcs/IRBD.txt to RomFS image...
+Writing /home/runner/work/CustomFullDexBuild/CustomFullDexBuild/src/build-switch-all/romfs/funcs/IRBF.txt to RomFS image...
+Writing /home/runner/work/CustomFullDexBuild/CustomFullDexBuild/src/build-switch-all/romfs/funcs/IRBI.txt to RomFS image...
+Writing /home/runner/work/CustomFullDexBuild/CustomFullDexBuild/src/build-switch-all/romfs/funcs/IRBJ.txt to RomFS image...
+Writing /home/runner/work/CustomFullDexBuild/CustomFullDexBuild/src/build-switch-all/romfs/funcs/IRBK.txt to RomFS image...
+Writing /home/runner/work/CustomFullDexBuild/CustomFullDexBuild/src/build-switch-all/romfs/funcs/IRBO.txt to RomFS image...
+Writing /home/runner/work/CustomFullDexBuild/CustomFullDexBuild/src/build-switch-all/romfs/funcs/IRBS.txt to RomFS image...
+Writing /home/runner/work/CustomFullDexBuild/CustomFullDexBuild/src/build-switch-all/romfs/funcs/IRDD.txt to RomFS image...
+Writing /home/runner/work/CustomFullDexBuild/CustomFullDexBuild/src/build-switch-all/romfs/funcs/IRDF.txt to RomFS image...
+Writing /home/runner/work/CustomFullDexBuild/CustomFullDexBuild/src/build-switch-all/romfs/funcs/IRDI.txt to RomFS image...
+Writing /home/runner/work/CustomFullDexBuild/CustomFullDexBuild/src/build-switch-all/romfs/funcs/IRDJ.txt to RomFS image...
+Writing /home/runner/work/CustomFullDexBuild/CustomFullDexBuild/src/build-switch-all/romfs/funcs/IRDK.txt to RomFS image...
+Writing /home/runner/work/CustomFullDexBuild/CustomFullDexBuild/src/build-switch-all/romfs/funcs/IRDO.txt to RomFS image...
+Writing /home/runner/work/CustomFullDexBuild/CustomFullDexBuild/src/build-switch-all/romfs/funcs/IRDS.txt to RomFS image...
+Writing /home/runner/work/CustomFullDexBuild/CustomFullDexBuild/src/build-switch-all/romfs/funcs/IRED.txt to RomFS image...
+Writing /home/runner/work/CustomFullDexBuild/CustomFullDexBuild/src/build-switch-all/romfs/funcs/IREF.txt to RomFS image...
+Writing /home/runner/work/CustomFullDexBuild/CustomFullDexBuild/src/build-switch-all/romfs/funcs/IREI.txt to RomFS image...
+Writing /home/runner/work/CustomFullDexBuild/CustomFullDexBuild/src/build-switch-all/romfs/funcs/IREJ.txt to RomFS image...
+Writing /home/runner/work/CustomFullDexBuild/CustomFullDexBuild/src/build-switch-all/romfs/funcs/IREK.txt to RomFS image...
+Writing /home/runner/work/CustomFullDexBuild/CustomFullDexBuild/src/build-switch-all/romfs/funcs/IREO.txt to RomFS image...
+Writing /home/runner/work/CustomFullDexBuild/CustomFullDexBuild/src/build-switch-all/romfs/funcs/IRES.txt to RomFS image...
+
+== Done: build-switch-all/ssrecomp.nro (30M)
+
+On the Switch's SD card, make the folder /switch/ssrecomp/ and copy into it:
+  - build-switch-all/ssrecomp.nro
+  - your ROM, renamed to rom.nds
+Then hold R while starting any game, and choose ssrecomp in the Homebrew Menu.
+The save (soulsilver.sav), settings (ssrecomp.cfg) and game.log are written to that folder.
+zip holds: switch/pokemon-ds-wide/pokemon-ds-wide.nro, switch/pokemon-ds-wide/LICENSE.txt, switch/pokemon-ds-wide/LICENSE-Noto.txt, switch/pokemon-ds-wide/LICENSE-mGBA.txt, switch/pokemon-ds-wide/roms/
+build-sd/SHA256SUMS.txt
+
+== Done: /home/runner/work/CustomFullDexBuild/CustomFullDexBuild/src/build-sd/pokemon-ds-wide-all-switch.zip
+-rw-r--r-- 1 root root 9524757 Nov  6 03:07 build-sd/pokemon-ds-wide-all-switch.zip
+
+build-sd/switch/pokemon-ds-wide:
+total 30612
+-rw-r--r-- 1 root root    16726 Nov  6 03:07 LICENSE-mGBA.txt
+-rw-r--r-- 1 root root     4301 Nov  6 03:07 LICENSE-Noto.txt
+-rw-r--r-- 1 root root    35147 Nov  6 03:07 LICENSE.txt
+-rw-r--r-- 1 root root 31276634 Nov  6 03:07 pokemon-ds-wide.nro
+drwxr-xr-x 2 root root     4096 Nov  6 03:07 roms
+
+Copy build-sd/switch to the root of the SD card, then your ROMs into /switch/pokemon-ds-wide/roms/ (any
+names; English Black, White, Black 2, White 2; SoulSilver and HeartGold US; the GBA games, Emerald,
+FireRed, LeafGreen and Ultra Violet, there or in a GBA folder in it). Its list also shows
+the games in the other folders of /switch (the one-game downloads), each with the save in its folder.
+On the Switch, hold R while starting any game and choose Pokémon Fulldex.
+The zip holds only the program, ready to share: nothing of the games.
+build-sd:
+total 9320
+drwxr-xr-x  3 runner runner    4096 Nov  6 03:07 .
+drwxr-xr-x 21 runner runner    4096 Nov  6 03:07 ..
+-rw-r--r--  1 runner runner     155 Nov  6 03:07 SHA256SUMS.txt
+-rw-r--r--  1 runner runner 9524757 Nov  6 03:07 pokemon-ds-wide-all-switch.zip
+drwxr-xr-x  3 runner runner    4096 Nov  6 03:07 switch
+
+build-sd/switch/pokemon-ds-wide:
+total 30620
+drwxr-xr-x 3 runner runner     4096 Nov  6 03:07 .
+drwxr-xr-x 3 runner runner     4096 Nov  6 03:07 ..
+-rw-r--r-- 1 runner runner     4301 Nov  6 03:07 LICENSE-Noto.txt
+-rw-r--r-- 1 runner runner    16726 Nov  6 03:07 LICENSE-mGBA.txt
+-rw-r--r-- 1 runner runner    35147 Nov  6 03:07 LICENSE.txt
+-rw-r--r-- 1 runner runner 31276634 Nov  6 03:07 pokemon-ds-wide.nro
+drwxr-xr-x 2 runner runner     4096 Nov  6 03:07 roms
+  31276634  switch/pokemon-ds-wide/pokemon-ds-wide.nro
+     35147  switch/pokemon-ds-wide/LICENSE.txt
+      4301  switch/pokemon-ds-wide/LICENSE-Noto.txt
+     16726  switch/pokemon-ds-wide/LICENSE-mGBA.txt
+         0  switch/pokemon-ds-wide/roms/

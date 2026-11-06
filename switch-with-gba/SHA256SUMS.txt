@@ -1,0 +1,2 @@
+eeab2f7adbba273b539fe9d5717df53c36cbba6cf27cc9270f680ea74a7b8f21  pokemon-ds-wide-all-switch.zip
+# fulldex-build pokemon-ds-wide-all-switch.zip 1793934316
