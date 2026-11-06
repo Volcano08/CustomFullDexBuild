@@ -1,0 +1,147 @@
+# Builds the Nintendo Switch all-in-one download (pokemon-ds-wide-all-switch.zip) from the source
+# zip in this repo, with devkitPro's official Docker image (devkitpro/devkita64), as
+# tools/switch/build_game.sh all does on a PC.
+#
+# No ROM is ever given to this workflow. Its input is ci-inputs/inputs.tar.gz: SoulSilver and
+# HeartGold's tables, addresses only, made from the builder's ROM by
+# tools/soulsilver/tables_only.py (the same tables every download carries inside its program), and
+# the Homebrew Menu icon. build_game.sh all would make those tables from gen/ (tables_only.py gives
+# back exactly the same tables when run on them) and checks the ROM's game code (IPGE) first, so the
+# tables stand in for gen/ and a 16-byte header stands in for the ROM in that check.
+#
+# Two builds run side by side:
+#   with-gba: devkitPro used from inside its image, with the GBA games built in (Pokemon GBA
+#             Widescreen on mGBA, as the release download has them)
+#   ds-only:  build_game.sh's own Docker route (DS games only), as a fallback
+# The results and the build logs are also pushed to the branch switch-build-output.
+name: Switch build
+
+on:
+  push:
+    branches: [switch-build]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        variant: [with-gba, ds-only]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 75
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: The inputs and the source
+        run: |
+          set -euo pipefail
+          mkdir -p logs inputs src
+          exec > >(tee -a "logs/${{ matrix.variant }}.log") 2>&1
+          tar -xzf ci-inputs/inputs.tar.gz -C inputs
+          ls -la inputs inputs/build-gen-tables
+          test -f inputs/build-gen-tables/sources.cmake
+          if ls inputs/build-gen-tables/rc_[0-9]*.cpp >/dev/null 2>&1; then echo "recompiled code in the inputs"; exit 1; fi
+          # (Made on Windows: its paths use backslashes, which unzip turns into folders with a
+          # warning, exit code 1.)
+          unzip -q pokemon-fulldex-main-github.zip -d src || [ $? -eq 1 ]
+          test -f src/tools/switch/build_game.sh
+          cp -r inputs/build-gen-tables src/gen
+          printf 'POKEMON SS  IPGE' > src/ipge-header.nds
+          cp inputs/icon-switch.jpg src/icon-switch.jpg
+
+      - name: Build with the GBA games (devkitPro from inside its image)
+        if: matrix.variant == 'with-gba'
+        run: |
+          set -euo pipefail
+          exec > >(tee -a "logs/${{ matrix.variant }}.log") 2>&1
+          cd src
+          # Pokemon GBA Widescreen's work folder as its setup.sh leaves it: the pinned mGBA with the
+          # widescreen patch, and the widescreen patches for each game.
+          GW="$PWD/home/pokemon-gba-wide"
+          mkdir -p "$GW/build/patches"
+          COMMIT="$(tr -d '[:space:]' < gba/patches/mgba.commit)"
+          git init -q "$GW/mgba"
+          git -C "$GW/mgba" remote add origin https://github.com/mgba-emu/mgba.git
+          git -C "$GW/mgba" fetch -q --depth 1 origin "$COMMIT"
+          git -C "$GW/mgba" checkout -q --force FETCH_HEAD
+          git -C "$GW/mgba" apply "$PWD/gba/patches/mgba-wide.patch"
+          cp gba/wide-patches/* "$GW/build/patches/"
+          docker pull -q devkitpro/devkita64
+          docker run --rm -v "$PWD:$PWD" -w "$PWD" -e HOME="$PWD/home" -e SSR_GBA_DIR="$PWD/gba" \
+            -e SSR_SWITCH_ICON_ALL="$PWD/icon-switch.jpg" devkitpro/devkita64 bash -c '
+              set -e
+              export DEBIAN_FRONTEND=noninteractive
+              for t in git cmake ninja python3 zip; do command -v $t >/dev/null || NEED=1; done
+              if [ -n "${NEED:-}" ]; then apt-get update -qq && apt-get install -y -qq git cmake ninja-build python3 zip >/dev/null; fi
+              git config --global --add safe.directory "*"
+              export DEVKITPRO=/opt/devkitpro
+              status=0
+              bash tools/switch/build_game.sh all ipge-header.nds || status=$?
+              chown -R '"$(id -u):$(id -g)"' .
+              exit $status'
+          ls -la build-sd build-sd/switch/pokemon-ds-wide
+
+      - name: Build, DS games only (build_game.sh's Docker route)
+        if: matrix.variant == 'ds-only'
+        run: |
+          set -euo pipefail
+          exec > >(tee -a "logs/${{ matrix.variant }}.log") 2>&1
+          sudo apt-get update -qq && sudo apt-get install -y -qq ninja-build >/dev/null
+          cd src
+          SSR_SWITCH_ICON_ALL="$PWD/icon-switch.jpg" bash tools/switch/build_game.sh all ipge-header.nds
+          ls -la build-sd build-sd/switch/pokemon-ds-wide
+
+      - name: Check the download holds only the program and its licences
+        run: |
+          set -euo pipefail
+          exec > >(tee -a "logs/${{ matrix.variant }}.log") 2>&1
+          python3 - src/build-sd/pokemon-ds-wide-all-switch.zip <<'PY'
+          import sys, zipfile
+          z = zipfile.ZipFile(sys.argv[1])
+          for i in z.infolist():
+              print(f"{i.file_size:>10}  {i.filename}")
+          bad = [n for n in z.namelist() if not n.startswith("switch/pokemon-ds-wide/")]
+          if bad: sys.exit(f"unexpected: {bad}")
+          PY
+          mkdir -p out
+          cp src/build-sd/pokemon-ds-wide-all-switch.zip src/build-sd/SHA256SUMS.txt out/
+
+      - uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: switch-${{ matrix.variant }}
+          path: out/
+          if-no-files-found: error
+          retention-days: 7
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: logs-${{ matrix.variant }}
+          path: logs/
+          retention-days: 7
+
+  publish:
+    needs: build
+    if: always()
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: collected
+      - name: Push the results and logs to the branch switch-build-output
+        run: |
+          set -euo pipefail
+          ls -laR collected
+          mkdir site && cd site
+          git init -q -b switch-build-output
+          cp -r ../collected/* .
+          git add -A
+          git -c user.name="github-actions[bot]" -c user.email="41898282+github-actions[bot]@users.noreply.github.com" \
+            commit -q -m "Switch build of ${GITHUB_SHA::7} (run ${GITHUB_RUN_ID})"
+          git push -q -f "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${GITHUB_REPOSITORY}.git" HEAD:switch-build-output
