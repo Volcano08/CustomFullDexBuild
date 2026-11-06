@@ -11,3 +11,5 @@ As of right now, I can only compile Linux AppImages, but I've uploaded the modif
 If you run into any trouble, feel free to ask any AI for help. It should be able to walk you through the process if needed.
 
 Have fun, everyone!
+
+Update: I was able to compile the other versions, including Windows and Mac, but I can only test the Linux AppImage.
