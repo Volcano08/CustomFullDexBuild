@@ -1,15 +1,81 @@
-# CustomFullDexBuild
+﻿# CustomFullDexBuild
 
-Hey everyone! I found FullDex a little while back and decided to add a few QoL features that I wanted. Mainly, I wanted the ability to play multiple hacks based on the same game. For example, Heartfelt Gold and Iridium are both based on HeartGold. In the original version, both would be assigned `heartgold.sav`, meaning they'd overwrite each other's save files. I've fixed that, so saves are now named after the ROM, just like most emulators do.
+An unofficial community-maintained modification of Pokémon FullDex.
 
-I also made the same change for cheat files and images. Cheat files go in a `cheats` folder, while images go in an `icons` folder. You'll generally have to create both of these folders yourself in the same directory where your `roms` folder is located.
+**Original project:** https://github.com/mamesj/pokemon-fulldex
 
-I also added the ability to rename your games within FullDex, so everything doesn't just show up as "HeartGold" when you're actually playing a bunch of different hacks.
+This project builds upon the original FullDex project and adds quality-of-life improvements and community modifications.
 
-As of right now, I can only compile Linux AppImages, but I've uploaded the modified source code here. So, if you want to run this on Windows, it's totally possible! You'll just need to download the source code and have a Pokémon SoulSilver (USA) ROM, since the build process uses it to grab the encounter tables.
+## What I've changed
 
-If you run into any trouble, feel free to ask any AI for help. It should be able to walk you through the process if needed.
+### Separate saves for ROM hacks
+In the original version, multiple ROM hacks based on the same game could share a save filename. For example, HeartGold hacks such as Heartfelt Gold and Iridium could overwrite each other's saves.
 
-Have fun, everyone!
+This modification names save files after their respective ROMs, allowing multiple hacks based on the same game to maintain independent saves.
 
-Update: I was able to compile the other versions, including Windows and Mac, but I can only test the Linux AppImage.
+### Separate cheat files and images
+Cheat files and game images are also handled separately for individual ROMs.
+
+- Cheat files go in a `cheats` folder.
+- Game images go in an `icons` folder.
+
+These folders should be created alongside your `roms` folder.
+
+### Custom game names
+You can rename games within FullDex, making it easier to distinguish multiple ROM hacks based on the same original game.
+
+### Platform builds
+Builds are provided for Windows, Linux, macOS, iOS and Nintendo Switch where available.
+
+Linux AppImage builds are my primary testing platform. Other platform builds are provided, but may not have received equivalent testing.
+
+## Installation and usage
+
+Download the appropriate release for your platform and follow the original FullDex installation instructions.
+
+You must provide your own legally obtained ROM files. No commercial Pokémon ROMs are included with this project.
+
+## Contributing
+
+Contributions are welcome!
+
+If you find a bug, have an improvement, or want to contribute a patch:
+
+1. Fork this repository.
+2. Create a separate branch for your changes.
+3. Make and test your modifications.
+4. Submit a pull request to this repository's `main` branch.
+5. Include a description of the changes and any relevant testing.
+
+Pull requests are preferred over sending entire modified source archives. This makes it easier to review, integrate and credit individual contributions.
+
+Contributors may be credited in launcher information and release notes.
+
+## Relationship to the original project
+
+This is an unofficial community modification of Pokémon FullDex.
+
+- Original repository: https://github.com/mamesj/pokemon-fulldex
+- Community modifications: https://github.com/Volcano08/CustomFullDexBuild
+
+This project is not an official release of the original FullDex project. It is independently maintained and is not affiliated with or endorsed by the original developer.
+
+Original FullDex contributors retain their respective authorship and attribution. Changes made in this repository are intended to supplement, not replace, the original project.
+
+## Licensing and attribution
+
+This project incorporates and modifies software distributed under the GNU General Public License version 3 or later (GPL-3.0-or-later).
+
+The original license is included in this repository as `LICENSE`.
+
+All applicable original copyright notices, license terms, third-party licenses and attribution notices must be preserved when distributing source code or binaries.
+
+Third-party components may have their own licensing terms. Refer to their respective license files in the source distribution.
+
+Original project contributors retain credit for their work. Community contributions should retain their authorship and applicable notices.
+
+## Disclaimer
+
+Pokémon and related trademarks are owned by their respective rights holders, including Nintendo, Game Freak and The Pokémon Company.
+
+This is an unofficial community project and is not affiliated with, sponsored by, or endorsed by those companies.
